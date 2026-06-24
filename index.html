@@ -5,345 +5,603 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hinário CCB — Estudo Musical</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
-        tailwind.config={theme:{extend:{colors:{bg:'#0C0C0C',surface:'#141414',card:'#1C1C1C',bdr:'#272727','bdr-h':'#383838',tx:'#E8E0D4','tx-2':'#9A9084','tx-3':'#5C564E',acc:'#C9A84C','s-green':'#34D399','s-yellow':'#FBBF24','s-red':'#F87171','s-jovem':'#A78BFA','occ-bt':'#38BDF8','occ-sc':'#E8B931','occ-fu':'#94A3B8','occ-en':'#C084FC'},fontFamily:{display:['"Playfair Display"','serif'],body:['"Source Sans 3"','sans-serif']}}}}
+        tailwind.config={theme:{extend:{colors:{bg:'#0C0C0C',surface:'#141414',card:'#1C1C1C','card-h':'#252525',bdr:'#272727','bdr-h':'#383838',tx:'#E8E0D4','tx-2':'#9A9084','tx-3':'#5C564E',acc:'#C9A84C','acc-h':'#DDB94F','s-green':'#34D399','s-yellow':'#FBBF24','s-red':'#F87171','s-jovem':'#A78BFA','occ-bt':'#38BDF8','occ-sc':'#E8B931','occ-fu':'#94A3B8','occ-en':'#C084FC'},fontFamily:{display:['"Playfair Display"','serif'],body:['"Source Sans 3"','sans-serif']}}}}
     </script>
     <style>
         *{box-sizing:border-box;scrollbar-width:thin;scrollbar-color:#272727 #141414}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#141414}::-webkit-scrollbar-thumb{background:#272727;border-radius:3px}
-        body{background:#0C0C0C;color:#E8E0D4;font-family:'Source Sans 3',sans-serif}
-        .nb{display:flex;align-items:center;gap:8px;width:100%;padding:5px 8px;border-radius:6px;font-size:11.5px;font-weight:400;color:#9A9084;transition:all .15s;text-align:left;cursor:pointer;background:0 0;border:none;outline:none}
-        .nb:hover{color:#E8E0D4;background:#1C1C1C}.nb.on{color:#C9A84C;background:#1C1C1C;font-weight:600}
-        .nb .d{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-        .hc{background:#1C1C1C;border:1px solid #272727;border-left:4px solid #272727;border-radius:8px;padding:9px 11px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
-        .hc::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none}
-        .hc:hover{background:#252525;border-color:#383838;transform:translateY(-2px)}
-        .hc.sg{border-left-color:#34D399}.hc.sg::before{background:radial-gradient(ellipse at left,rgba(52,211,153,.06),transparent 70%);opacity:1}
-        .hc.sy{border-left-color:#FBBF24}.hc.sy::before{background:radial-gradient(ellipse at left,rgba(251,191,36,.06),transparent 70%);opacity:1}
-        .hc.sr{border-left-color:#F87171}.hc.sr::before{background:radial-gradient(ellipse at left,rgba(248,113,113,.06),transparent 70%);opacity:1}
-        .pe{transform:translateX(0)!important}
-        .sb{flex:1;padding:10px 4px;border-radius:8px;border:2px solid transparent;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;background:#1C1C1C;color:#9A9084}
-        .sb:hover{border-color:#383838;color:#E8E0D4}
-        .sb.g1{border-color:#34D399;background:rgba(52,211,153,.1);color:#34D399}
-        .sb.y1{border-color:#FBBF24;background:rgba(251,191,36,.1);color:#FBBF24}
-        .sb.r1{border-color:#F87171;background:rgba(248,113,113,.1);color:#F87171}
-        .pf{transition:width .6s cubic-bezier(.22,1,.36,1)}.ts{transform:translateY(0)!important;opacity:1!important}
-        @keyframes ci{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.ca{animation:ci .22s ease forwards;opacity:0}
-        .mb{background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
-        .na{background:#1C1C1C;border:1px solid #272727;border-radius:8px;color:#E8E0D4;padding:10px 12px;font-family:'Source Sans 3',sans-serif;font-size:13px;resize:vertical;width:100%;min-height:110px;transition:border-color .2s;outline:0}
-        .na:focus{border-color:#C9A84C}.na::placeholder{color:#5C564E}
-        .hg{position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:400px;height:160px;background:radial-gradient(ellipse,rgba(201,168,76,.06),transparent 70%);pointer-events:none}
-        .lb{width:26px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:5px;font-size:9.5px;font-weight:600;cursor:pointer;color:#9A9084;background:0 0;border:none;transition:all .12s}
-        .lb:hover{color:#E8E0D4;background:#1C1C1C}.lb.on{color:#C9A84C;background:#1C1C1C}.lb.off{color:#1a1a1a;cursor:default;pointer-events:none}
-        .ss{padding:0 8px;margin-bottom:2px}.sl{font-size:7.5px;text-transform:uppercase;letter-spacing:.12em;color:#5C564E;padding:5px 8px 2px;font-weight:700}
-        .lc2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-        .ot{display:inline-flex;align-items:center;font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;padding:1px 4px;border-radius:3px;line-height:1.4;white-space:nowrap}
-        @media(prefers-reduced-motion:reduce){.ca{animation:none;opacity:1}.hc:hover{transform:none}.pf{transition:none}}
+        body{background:#0C0C0C;color:#E8E0D4;font-family:'Source Sans 3',sans-serif;margin:0}
+        .nav-btn{display:flex;align-items:center;gap:9px;width:100%;padding:5px 9px;border-radius:7px;font-size:12px;font-weight:400;color:#9A9084;transition:all .15s;text-align:left;cursor:pointer;background:0 0;border:none;outline:none}
+        .nav-btn:hover{color:#E8E0D4;background:#1C1C1C}.nav-btn.active{color:#C9A84C;background:#1C1C1C;font-weight:600}
+        .nav-btn .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+        .sidebar-section{padding:0 9px;margin-bottom:2px}
+        .sidebar-label{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:#5C564E;padding:6px 9px 3px;font-weight:700}
+        .hymn-card{background:#1C1C1C;border:1px solid #272727;border-left:4px solid #272727;border-radius:9px;padding:10px 12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+        .hymn-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;pointer-events:none}
+        .hymn-card:hover{background:#252525;border-color:#383838;transform:translateY(-2px)}
+        .hymn-card.status-green{border-left-color:#34D399}.hymn-card.status-green::before{background:radial-gradient(ellipse at left,rgba(52,211,153,.06),transparent 70%);opacity:1}
+        .hymn-card.status-yellow{border-left-color:#FBBF24}.hymn-card.status-yellow::before{background:radial-gradient(ellipse at left,rgba(251,191,36,.06),transparent 70%);opacity:1}
+        .hymn-card.status-red{border-left-color:#F87171}.hymn-card.status-red::before{background:radial-gradient(ellipse at left,rgba(248,113,113,.06),transparent 70%);opacity:1}
+        @keyframes cardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.card-animate{animation:cardIn .22s ease forwards;opacity:0}
+        .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+        .panel-enter{transform:translateX(0)!important}
+        .panel-content-transition{transition:opacity .2s ease,transform .2s ease}
+        .panel-content-transition.fade-out{opacity:0;transform:translateX(12px)}
+        .status-btn{flex:1;padding:10px 4px;border-radius:9px;border:2px solid transparent;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;background:#1C1C1C;color:#9A9084}
+        .status-btn:hover{border-color:#383838;color:#E8E0D4}
+        .status-btn.sel-green{border-color:#34D399;background:rgba(52,211,153,.1);color:#34D399}
+        .status-btn.sel-yellow{border-color:#FBBF24;background:rgba(251,191,36,.1);color:#FBBF24}
+        .status-btn.sel-red{border-color:#F87171;background:rgba(248,113,113,.1);color:#F87171}
+        .metronome-dot{width:10px;height:10px;border-radius:50%;background:#383838;transition:all .08s ease}
+        .metronome-dot.active{background:#C9A84C;box-shadow:0 0 8px rgba(201,168,76,.5);transform:scale(1.3)}
+        .metronome-dot.downbeat.active{background:#E8E0D4;box-shadow:0 0 10px rgba(232,224,212,.4);transform:scale(1.4)}
+        .bpm-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;background:#272727;outline:none}
+        .bpm-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:#C9A84C;cursor:pointer;border:2px solid #0C0C0C}
+        .bpm-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#C9A84C;cursor:pointer;border:2px solid #0C0C0C}
+        .beat-btn{cursor:pointer;border:1px solid #272727;background:transparent;transition:all .15s ease}
+        .beat-btn:hover{color:#E8E0D4!important}
+        .beat-btn.active-beat{background:rgba(201,168,76,.15)!important;color:#C9A84C!important;border-color:rgba(201,168,76,.3)!important}
+        .progress-fill{transition:width .6s cubic-bezier(.22,1,.36,1)}
+        .toast-show{transform:translateY(0)!important;opacity:1!important}
+        .modal-bg{background:rgba(0,0,0,.6);backdrop-filter:blur(4px)}
+        .note-area{background:#1C1C1C;border:1px solid #272727;border-radius:9px;color:#E8E0D4;padding:11px 13px;font-family:'Source Sans 3',sans-serif;font-size:13px;resize:vertical;width:100%;min-height:110px;transition:border-color .2s;outline:0}
+        .note-area:focus{border-color:#C9A84C}.note-area::placeholder{color:#5C564E}
+        .header-glow{position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:400px;height:160px;background:radial-gradient(ellipse,rgba(201,168,76,.06),transparent 70%);pointer-events:none}
+        .letter-btn{width:27px;height:25px;display:flex;align-items:center;justify-content:center;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;color:#9A9084;background:0 0;border:none;transition:all .12s}
+        .letter-btn:hover{color:#E8E0D4;background:#1C1C1C}.letter-btn.active{color:#C9A84C;background:#1C1C1C}.letter-btn.disabled{color:#1a1a1a;cursor:default;pointer-events:none}
+        .tonality-select{background:#1C1C1C;border:1px solid #272727;border-radius:8px;padding:5px 28px 5px 10px;font-size:12px;color:#E8E0D4;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239A9084' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+        .tonality-select:focus{border-color:#C9A84C}.tonality-select option{background:#1C1C1C;color:#E8E0D4}
+        #pdfCanvas{max-width:100%;height:auto;display:block;margin:0 auto}
+        @media(prefers-reduced-motion:reduce){.card-animate{animation:none;opacity:1}.hymn-card:hover{transform:none}.progress-fill{transition:none}.panel-content-transition{transition:none}}
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden">
 
-<aside id="sidebar" class="fixed left-0 top-0 h-full w-[240px] bg-surface border-r border-bdr z-40 flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-300">
-    <div class="p-3 border-b border-bdr flex-shrink-0">
-        <div class="flex items-center gap-2"><div class="w-7 h-7 rounded-lg bg-acc/15 flex items-center justify-center"><i class="fas fa-music text-acc text-[10px]"></i></div><div><h1 class="font-display text-[14px] font-bold text-tx leading-tight">Hinário CCB</h1><p class="text-tx-3 text-[8px]">Estudo Musical</p></div></div>
+<aside id="sidebar" class="fixed left-0 top-0 h-full w-[246px] bg-surface border-r border-bdr z-40 flex flex-col -translate-x-full md:translate-x-0 transition-transform duration-300">
+    <div class="p-3.5 border-b border-bdr flex-shrink-0">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-acc/15 flex items-center justify-center"><i class="fas fa-music text-acc text-xs"></i></div>
+            <div><h1 class="font-display text-[15px] font-bold text-tx leading-tight">Hinário CCB</h1><p class="text-tx-3 text-[9px]">Estudo Musical</p></div>
+        </div>
     </div>
     <nav class="flex-1 overflow-y-auto py-1">
-        <div class="sl">Geral</div>
-        <div class="ss space-y-px mb-1.5" id="nM">
-            <button class="nb on" data-f="all"><i class="fas fa-border-all w-4 text-center text-[9px]"></i>Todos<span class="ml-auto text-tx-3 text-[10px]">486</span></button>
-            <button class="nb" data-f="hinos"><i class="fas fa-book-open w-4 text-center text-[9px]"></i>Hinos<span class="ml-auto text-tx-3 text-[10px]">480</span></button>
-            <button class="nb" data-f="corinhos"><i class="fas fa-microphone w-4 text-center text-[9px]"></i>Corinhos<span class="ml-auto text-tx-3 text-[10px]">6</span></button>
+        <div class="sidebar-label">Geral</div>
+        <div class="sidebar-section space-y-px mb-2" id="navMain">
+            <button class="nav-btn active" data-filter="all"><i class="fas fa-border-all w-4 text-center text-[10px]"></i>Todos<span class="ml-auto text-tx-3 text-[10px]">486</span></button>
+            <button class="nav-btn" data-filter="hinos"><i class="fas fa-book-open w-4 text-center text-[10px]"></i>Hinos<span class="ml-auto text-tx-3 text-[10px]">480</span></button>
+            <button class="nav-btn" data-filter="corinhos"><i class="fas fa-microphone w-4 text-center text-[10px]"></i>Corinhos<span class="ml-auto text-tx-3 text-[10px]">6</span></button>
         </div>
-        <div class="sl">Categoria</div>
-        <div class="ss space-y-px mb-1.5" id="nC">
-            <button class="nb" data-f="adultos"><i class="fas fa-users w-4 text-center text-[9px]"></i>Adultos<span class="ml-auto text-tx-3 text-[10px]">430</span></button>
-            <button class="nb" data-f="jovens"><i class="fas fa-user-graduate w-4 text-center text-[9px]" style="color:#A78BFA"></i>Jovens<span class="ml-auto text-tx-3 text-[10px]">50</span></button>
+        <div class="sidebar-label">Categoria</div>
+        <div class="sidebar-section space-y-px mb-2" id="navCat">
+            <button class="nav-btn" data-filter="adultos"><i class="fas fa-users w-4 text-center text-[10px]"></i>Adultos<span class="ml-auto text-tx-3 text-[10px]">430</span></button>
+            <button class="nav-btn" data-filter="jovens"><i class="fas fa-user-graduate w-4 text-center text-[10px]" style="color:#A78BFA"></i>Jovens<span class="ml-auto text-tx-3 text-[10px]">50</span></button>
         </div>
-        <div class="sl">Ocasiões</div>
-        <div class="ss space-y-px mb-1.5" id="nO">
-            <button class="nb" data-f="occ-batismo"><i class="fas fa-water w-4 text-center text-[9px]" style="color:#38BDF8"></i>Batismo<span class="ml-auto text-tx-3 text-[10px]">32</span></button>
-            <button class="nb" data-f="occ-santa_ceia"><i class="fas fa-wine-glass-alt w-4 text-center text-[9px]" style="color:#E8B931"></i>Santa Ceia<span class="ml-auto text-tx-3 text-[10px]">17</span></button>
-            <button class="nb" data-f="occ-funeral"><i class="fas fa-cross w-4 text-center text-[9px]" style="color:#94A3B8"></i>Funeral<span class="ml-auto text-tx-3 text-[10px]">7</span></button>
-            <button class="nb" data-f="occ-encerramento"><i class="fas fa-door-open w-4 text-center text-[9px]" style="color:#C084FC"></i>Encerramento<span class="ml-auto text-tx-3 text-[10px]">2</span></button>
+        <div class="sidebar-label">Ocasiões</div>
+        <div class="sidebar-section space-y-px mb-2" id="navOcc">
+            <button class="nav-btn" data-filter="occ-batismo"><i class="fas fa-water w-4 text-center text-[10px]" style="color:#38BDF8"></i>Batismo<span class="ml-auto text-tx-3 text-[10px]">32</span></button>
+            <button class="nav-btn" data-filter="occ-santa_ceia"><i class="fas fa-wine-glass-alt w-4 text-center text-[10px]" style="color:#E8B931"></i>Santa Ceia<span class="ml-auto text-tx-3 text-[10px]">17</span></button>
+            <button class="nav-btn" data-filter="occ-funeral"><i class="fas fa-cross w-4 text-center text-[10px]" style="color:#94A3B8"></i>Funeral<span class="ml-auto text-tx-3 text-[10px]">7</span></button>
+            <button class="nav-btn" data-filter="occ-encerramento"><i class="fas fa-door-open w-4 text-center text-[10px]" style="color:#C084FC"></i>Encerramento<span class="ml-auto text-tx-3 text-[10px]">2</span></button>
         </div>
-        <div class="sl">Por Faixa</div>
-        <div class="ss space-y-px mb-1.5" id="nR">
-            <button class="nb" data-f="range-1-100"><i class="fas fa-hashtag w-4 text-center text-[8px]"></i>001 — 100</button>
-            <button class="nb" data-f="range-101-200"><i class="fas fa-hashtag w-4 text-center text-[8px]"></i>101 — 200</button>
-            <button class="nb" data-f="range-201-300"><i class="fas fa-hashtag w-4 text-center text-[8px]"></i>201 — 300</button>
-            <button class="nb" data-f="range-301-400"><i class="fas fa-hashtag w-4 text-center text-[8px]"></i>301 — 400</button>
-            <button class="nb" data-f="range-401-430"><i class="fas fa-hashtag w-4 text-center text-[8px]"></i>401 — 430</button>
-            <button class="nb" data-f="range-431-480"><i class="fas fa-hashtag w-4 text-center text-[8px]" style="color:#A78BFA"></i>431 — 480<span class="ml-auto text-[8px] text-s-jovem/60 font-semibold">Jovens</span></button>
+        <div class="sidebar-label">Por Faixa</div>
+        <div class="sidebar-section space-y-px mb-2" id="navRanges">
+            <button class="nav-btn" data-filter="range-1-100"><i class="fas fa-hashtag w-4 text-center text-[9px]"></i>001 — 100</button>
+            <button class="nav-btn" data-filter="range-101-200"><i class="fas fa-hashtag w-4 text-center text-[9px]"></i>101 — 200</button>
+            <button class="nav-btn" data-filter="range-201-300"><i class="fas fa-hashtag w-4 text-center text-[9px]"></i>201 — 300</button>
+            <button class="nav-btn" data-filter="range-301-400"><i class="fas fa-hashtag w-4 text-center text-[9px]"></i>301 — 400</button>
+            <button class="nav-btn" data-filter="range-401-430"><i class="fas fa-hashtag w-4 text-center text-[9px]"></i>401 — 430</button>
+            <button class="nav-btn" data-filter="range-431-480"><i class="fas fa-hashtag w-4 text-center text-[9px]" style="color:#A78BFA"></i>431 — 480<span class="ml-auto text-[9px] text-s-jovem/60 font-semibold">Jovens</span></button>
         </div>
-        <div class="sl">Por Letra</div>
-        <div class="px-2 mb-1.5"><div class="grid grid-cols-7 gap-px" id="lG"></div></div>
-        <div class="sl">Por Status</div>
-        <div class="ss space-y-px mb-1" id="nS">
-            <button class="nb" data-f="green"><span class="d bg-s-green"></span>Bom<span class="ml-auto text-tx-3 text-[10px]" id="cG">0</span></button>
-            <button class="nb" data-f="yellow"><span class="d bg-s-yellow"></span>Praticar<span class="ml-auto text-tx-3 text-[10px]" id="cY">0</span></button>
-            <button class="nb" data-f="red"><span class="d bg-s-red"></span>Difícil<span class="ml-auto text-tx-3 text-[10px]" id="cR">0</span></button>
-            <button class="nb" data-f="none"><span class="d" style="background:#383838"></span>Sem marcação<span class="ml-auto text-tx-3 text-[10px]" id="cN">486</span></button>
+        <div class="sidebar-label">Por Letra</div>
+        <div class="px-2 mb-2"><div class="grid grid-cols-7 gap-px" id="letterGrid"></div></div>
+        <div class="sidebar-label">Por Status</div>
+        <div class="sidebar-section space-y-px mb-1" id="navStatus">
+            <button class="nav-btn" data-filter="green"><span class="dot bg-s-green"></span>Bom<span class="ml-auto text-tx-3 text-[10px]" id="countGreen">0</span></button>
+            <button class="nav-btn" data-filter="yellow"><span class="dot bg-s-yellow"></span>Praticar<span class="ml-auto text-tx-3 text-[10px]" id="countYellow">0</span></button>
+            <button class="nav-btn" data-filter="red"><span class="dot bg-s-red"></span>Difícil<span class="ml-auto text-tx-3 text-[10px]" id="countRed">0</span></button>
+            <button class="nav-btn" data-filter="none"><span class="dot" style="background:#383838"></span>Sem marcação<span class="ml-auto text-tx-3 text-[10px]" id="countNone">486</span></button>
         </div>
     </nav>
     <div class="p-2 border-t border-bdr space-y-px flex-shrink-0">
-        <button id="bR" class="nb w-full" style="color:#C9A84C"><i class="fas fa-dice w-4 text-center text-[9px]"></i>Hino aleatório</button>
-        <button id="bE" class="nb"><i class="fas fa-file-export w-4 text-center text-[9px]"></i>Exportar JSON</button>
-        <button id="bI" class="nb"><i class="fas fa-file-import w-4 text-center text-[9px]"></i>Importar JSON</button>
-        <input type="file" id="fI" accept=".json" class="hidden">
-        <button id="bC" class="nb hover:!text-s-red"><i class="fas fa-trash-alt w-4 text-center text-[9px]"></i>Limpar dados</button>
+        <button id="btnRandom" class="nav-btn w-full" style="color:#C9A84C"><i class="fas fa-dice w-4 text-center text-[10px]"></i>Hino aleatório</button>
+        <button id="btnExport" class="nav-btn"><i class="fas fa-file-export w-4 text-center text-[10px]"></i>Exportar JSON</button>
+        <button id="btnImport" class="nav-btn"><i class="fas fa-file-import w-4 text-center text-[10px]"></i>Importar JSON</button>
+        <input type="file" id="fileImport" accept=".json" class="hidden">
+        <button id="btnClear" class="nav-btn hover:!text-s-red"><i class="fas fa-trash-alt w-4 text-center text-[10px]"></i>Limpar dados</button>
     </div>
 </aside>
-<div id="sO" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="tS()"></div>
 
-<main class="md:ml-[240px] min-h-screen flex flex-col">
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+<main class="md:ml-[246px] min-h-screen flex flex-col">
     <header class="sticky top-0 z-20 bg-bg/85 backdrop-blur-xl border-b border-bdr relative">
-        <div class="hg"></div>
-        <div class="px-4 md:px-6 py-2.5 flex items-center gap-3">
-            <button class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg bg-card border border-bdr text-tx-2 hover:text-tx" onclick="tS()" aria-label="Menu"><i class="fas fa-bars text-sm"></i></button>
-            <div class="relative flex-1 max-w-lg">
+        <div class="header-glow"></div>
+        <div class="px-4 md:px-6 py-3 flex items-center gap-3">
+            <button class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg bg-card border border-bdr text-tx-2 hover:text-tx" onclick="toggleSidebar()" aria-label="Menu"><i class="fas fa-bars text-sm"></i></button>
+            <div class="relative flex-1 max-w-md">
                 <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-tx-3 text-xs"></i>
-                <input id="sI" type="text" placeholder="Buscar por número ou título..." class="w-full bg-card border border-bdr rounded-xl pl-10 pr-16 py-2.5 text-sm text-tx placeholder-tx-3 focus:outline-none focus:border-acc/50 transition-colors">
+                <input id="searchInput" type="text" placeholder="Buscar por número ou título..." class="w-full bg-card border border-bdr rounded-xl pl-10 pr-16 py-2.5 text-sm text-tx placeholder-tx-3 focus:outline-none focus:border-acc/50 transition-colors">
                 <kbd class="hidden sm:inline-flex absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-tx-3 bg-bg px-1.5 py-0.5 rounded border border-bdr font-mono">Ctrl+K</kbd>
             </div>
-            <div class="hidden sm:flex items-center gap-3 text-xs text-tx-3"><span id="hF" class="text-acc font-semibold"></span><span id="hI">486 itens</span></div>
+            <div class="flex items-center gap-2">
+                <select id="tonalitySelect" class="tonality-select" onchange="onTonalityChange(this.value)">
+                    <option value="">Tonalidade</option>
+                    <option value="C">Dó (C)</option>
+                    <option value="D">Ré (D)</option>
+                    <option value="E">Mi (E)</option>
+                    <option value="F">Fá (F)</option>
+                    <option value="G">Sol (G)</option>
+                    <option value="A">Lá (A)</option>
+                    <option value="B">Si (B)</option>
+                </select>
+            </div>
         </div>
     </header>
     <section class="px-4 md:px-6 pt-4 pb-2">
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
-            <div class="bg-card border border-bdr rounded-xl p-2.5"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-green"></span><span class="text-tx-3 text-[8px] font-bold uppercase tracking-wider">Bom</span></div><p class="text-xl font-bold text-s-green leading-none" id="sG">0</p></div>
-            <div class="bg-card border border-bdr rounded-xl p-2.5"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-yellow"></span><span class="text-tx-3 text-[8px] font-bold uppercase tracking-wider">Praticar</span></div><p class="text-xl font-bold text-s-yellow leading-none" id="sY">0</p></div>
-            <div class="bg-card border border-bdr rounded-xl p-2.5"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-red"></span><span class="text-tx-3 text-[8px] font-bold uppercase tracking-wider">Difícil</span></div><p class="text-xl font-bold text-s-red leading-none" id="sR">0</p></div>
-            <div class="bg-card border border-bdr rounded-xl p-2.5"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full" style="background:#383838"></span><span class="text-tx-3 text-[8px] font-bold uppercase tracking-wider">Pendente</span></div><p class="text-xl font-bold text-tx-3 leading-none" id="sN">486</p></div>
-            <div class="bg-card border border-bdr rounded-xl p-2.5 col-span-2 sm:col-span-1"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-jovem"></span><span class="text-tx-3 text-[8px] font-bold uppercase tracking-wider">Jovens</span></div><p class="text-xl font-bold text-s-jovem leading-none" id="sJ">0</p></div>
+            <div class="bg-card border border-bdr rounded-xl p-3"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-green"></span><span class="text-tx-3 text-[9px] font-bold uppercase tracking-wider">Bom</span></div><p class="text-xl font-bold text-s-green leading-none" id="statGreen">0</p></div>
+            <div class="bg-card border border-bdr rounded-xl p-3"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-yellow"></span><span class="text-tx-3 text-[9px] font-bold uppercase tracking-wider">Praticar</span></div><p class="text-xl font-bold text-s-yellow leading-none" id="statYellow">0</p></div>
+            <div class="bg-card border border-bdr rounded-xl p-3"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-red"></span><span class="text-tx-3 text-[9px] font-bold uppercase tracking-wider">Difícil</span></div><p class="text-xl font-bold text-s-red leading-none" id="statRed">0</p></div>
+            <div class="bg-card border border-bdr rounded-xl p-3"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full" style="background:#383838"></span><span class="text-tx-3 text-[9px] font-bold uppercase tracking-wider">Pendente</span></div><p class="text-xl font-bold text-tx-3 leading-none" id="statNone">486</p></div>
+            <div class="bg-card border border-bdr rounded-xl p-3 col-span-2 sm:col-span-1"><div class="flex items-center gap-1.5 mb-1"><span class="w-2 h-2 rounded-full bg-s-jovem"></span><span class="text-tx-3 text-[9px] font-bold uppercase tracking-wider">Jovens</span></div><p class="text-xl font-bold text-s-jovem leading-none" id="statJovens">0</p></div>
         </div>
-        <div class="bg-card border border-bdr rounded-xl p-2.5">
-            <div class="flex items-center justify-between mb-1"><span class="text-[8px] font-bold text-tx-3 uppercase tracking-wider">Progresso</span><span class="text-[10px] text-tx-3 font-mono" id="pP">0%</span></div>
-            <div class="flex h-2 rounded-full overflow-hidden bg-bg gap-px"><div id="bG" class="pf bg-s-green rounded-l-full" style="width:0%"></div><div id="bY" class="pf bg-s-yellow" style="width:0%"></div><div id="bR2" class="pf bg-s-red rounded-r-full" style="width:0%"></div></div>
-            <p class="text-[9px] text-tx-3 mt-1" id="pL">Nenhum hino marcado ainda</p>
+        <div class="bg-card border border-bdr rounded-xl p-3">
+            <div class="flex items-center justify-between mb-1.5"><span class="text-[9px] font-bold text-tx-3 uppercase tracking-wider">Progresso</span><span class="text-[10px] text-tx-3 font-mono" id="progressPercent">0%</span></div>
+            <div class="flex h-2 rounded-full overflow-hidden bg-bg gap-px"><div id="barGreen" class="progress-fill bg-s-green rounded-l-full" style="width:0%"></div><div id="barYellow" class="progress-fill bg-s-yellow" style="width:0%"></div><div id="barRed" class="progress-fill bg-s-red rounded-r-full" style="width:0%"></div></div>
+            <p class="text-[10px] text-tx-3 mt-1" id="progressLabel">Nenhum hino marcado ainda</p>
         </div>
     </section>
     <section class="px-4 md:px-6 py-2 flex-1">
-        <div id="hG" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"></div>
-        <div id="eS" class="hidden text-center py-20"><i class="fas fa-search text-4xl text-tx-3 mb-4"></i><p class="text-tx-2 text-lg">Nenhum hino encontrado</p><p class="text-tx-3 text-sm mt-1">Ajuste os filtros ou a busca</p></div>
+        <div id="hymnGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2"></div>
+        <div id="emptyState" class="hidden text-center py-20"><i class="fas fa-search text-4xl text-tx-3 mb-4"></i><p class="text-tx-2 text-lg">Nenhum hino encontrado</p><p class="text-tx-3 text-sm mt-1">Ajuste os filtros ou a busca</p></div>
     </section>
-    <section id="pg" class="px-4 md:px-6 pb-4 flex items-center justify-center gap-1 flex-wrap"></section>
+    <section id="pagination" class="px-4 md:px-6 pb-4 flex items-center justify-center gap-1 flex-wrap"></section>
 </main>
 
-<div id="pO" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="cP()"></div>
-<aside id="dP" class="fixed right-0 top-0 h-full w-full sm:w-[370px] bg-surface border-l border-bdr z-50 translate-x-full transition-transform duration-300 ease-out flex flex-col">
-    <div class="flex items-center justify-between p-3.5 border-b border-bdr flex-shrink-0"><span class="text-tx-3 text-[9px] uppercase tracking-widest font-bold">Detalhes</span><button onclick="cP()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-card text-tx-3 hover:text-tx transition-colors" aria-label="Fechar"><i class="fas fa-times"></i></button></div>
-    <div class="flex-1 overflow-y-auto p-5 space-y-5" id="pC"></div>
+<!-- PAINEL DE DETALHE -->
+<div id="panelOverlay" class="fixed inset-0 bg-black/40 z-40 hidden" onclick="closePanel()"></div>
+<aside id="detailPanel" class="fixed right-0 top-0 h-full w-full sm:w-[400px] bg-surface border-l border-bdr z-50 translate-x-full transition-transform duration-300 ease-out flex flex-col">
+    <div class="flex items-center justify-between p-4 border-b border-bdr flex-shrink-0"><span class="text-tx-3 text-[10px] uppercase tracking-widest font-bold">Detalhes</span><button onclick="closePanel()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-card text-tx-3 hover:text-tx transition-colors" aria-label="Fechar"><i class="fas fa-times"></i></button></div>
+    <div class="flex-1 overflow-y-auto" id="panelScroll"><div class="p-5 space-y-5 panel-content-transition" id="panelContent"></div></div>
 </aside>
 
-<div id="cM" class="fixed inset-0 z-[60] hidden items-center justify-center mb">
-    <div class="bg-surface border border-bdr rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
-        <p class="text-tx text-base font-semibold mb-2" id="cT">Confirmar</p>
-        <p class="text-tx-2 text-sm mb-5" id="cX">Tem certeza?</p>
-        <div class="flex gap-3 justify-end">
-            <button onclick="cC()" class="px-4 py-2 rounded-lg text-sm text-tx-2 hover:text-tx hover:bg-card transition-colors">Cancelar</button>
-            <button id="cB" class="px-4 py-2 rounded-lg text-sm font-semibold bg-s-red/15 text-s-red hover:bg-s-red/25 transition-colors">Confirmar</button>
+<!-- MODAL DO PDF (fullscreen) COM ZOOM -->
+<div id="pdfModal" class="fixed inset-0 z-[80] hidden" style="background:rgba(0,0,0,.85);backdrop-filter:blur(8px)">
+    <div class="flex flex-col h-full">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-bdr bg-surface/90 backdrop-blur-sm flex-shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <span class="text-acc font-display font-bold text-sm truncate" id="pdfTitle">Hinário</span>
+                <span class="text-tx-3 text-xs flex-shrink-0" id="pdfPageInfo">Página 1</span>
+            </div>
+            <div class="flex items-center gap-1.5 flex-shrink-0">
+                <!-- Botões de Zoom -->
+                <button onclick="pdfZoomOut()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-bdr bg-card hover:bg-card-h text-tx-2 hover:text-tx transition-colors" title="Diminuir Zoom"><i class="fas fa-search-minus text-xs"></i></button>
+                <span id="pdfZoomLevel" class="text-tx-3 text-[11px] w-10 text-center font-mono select-none">100%</span>
+                <div class="w-px h-5 bg-bdr mx-1"></div>
+                <button onclick="toggleSpreadMode()" id="btnSpread" class="w-8 h-8 flex items-center justify-center rounded-lg border border-bdr bg-card hover:bg-card-h transition-colors" style="color:#C9A84C" title="Alternar 1 ou 2 páginas"><i class="fas fa-book-open text-xs"></i></button>
+                <button onclick="pdfZoomIn()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-bdr bg-card hover:bg-card-h text-tx-2 hover:text-tx transition-colors" title="Aumentar Zoom"><i class="fas fa-search-plus text-xs"></i></button>
+                
+                <div class="w-px h-5 bg-bdr mx-1"></div>
+
+                <!-- Botões de Página -->
+                <button onclick="pdfPrevPage()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-bdr bg-card hover:bg-card-h text-tx-2 hover:text-tx transition-colors"><i class="fas fa-chevron-left text-xs"></i></button>
+                <button onclick="pdfNextPage()" class="w-8 h-8 flex items-center justify-center rounded-lg border border-bdr bg-card hover:bg-card-h text-tx-2 hover:text-tx transition-colors"><i class="fas fa-chevron-right text-xs"></i></button>
+                <button onclick="closePdfModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-card text-tx-3 hover:text-tx transition-colors ml-1"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-auto p-4 flex items-start justify-center" id="pdfViewerContainer">
+            <canvas id="pdfCanvas"></canvas>
         </div>
     </div>
 </div>
 
-<div id="to" class="fixed bottom-6 right-6 z-[70] bg-card border border-bdr rounded-xl px-5 py-3 shadow-2xl flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <i id="tI" class="fas fa-check-circle text-s-green"></i>
-    <span id="tM" class="text-sm text-tx">OK</span>
+<!-- MODAL DE CONFIRMAÇÃO -->
+<div id="confirmModal" class="fixed inset-0 z-[90] hidden items-center justify-center modal-bg">
+    <div class="bg-surface border border-bdr rounded-2xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+        <p class="text-tx text-base font-semibold mb-2" id="confirmTitle">Confirmar</p>
+        <p class="text-tx-2 text-sm mb-5" id="confirmMsg">Tem certeza?</p>
+        <div class="flex gap-3 justify-end">
+            <button onclick="closeConfirm()" class="px-4 py-2 rounded-lg text-sm text-tx-2 hover:text-tx hover:bg-card transition-colors">Cancelar</button>
+            <button id="confirmBtn" class="px-4 py-2 rounded-lg text-sm font-semibold bg-s-red/15 text-s-red hover:bg-s-red/25 transition-colors">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 right-6 z-[100] bg-card border border-bdr rounded-xl px-5 py-3 shadow-2xl flex items-center gap-3 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <i id="toastIcon" class="fas fa-check-circle text-s-green"></i>
+    <span id="toastMsg" class="text-sm text-tx">OK</span>
 </div>
 
 <script>
-// =====================================================
-// TÍTULOS COMPLETOS (incluindo letra E)
-// =====================================================
+// =========================================================
+// PDF.js worker
+// =========================================================
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// =========================================================
+// TÍTULOS
+// =========================================================
 const T={125:"Mais grato a Ti",178:"A Palavra da verdade...",195:"Senhor, estou disposto",237:"Deus é por mim",240:"Glória, glória dou a Jesus com fervor...",254:"De Jesus a graça divina",273:"Jesus me deu celeste hino",324:"Do mal o Salvador veio me tirar",326:"Sempre a Cristo fiéis",400:"Divina Fonte é Jesus",146:"De Deus veio a Luz",176:"Por Ti vivo, ó Deus potente",1:"Cristo, meu Mestre",2:"De Deus tu és eleita",3:"Faz-nos ouvir Tua voz",4:"Ouve a nossa oração",5:"A Rocha celestial",6:"Ao Cordeiro imaculado, Jesus Cristo",7:"Granjeai, granjeai os talentos",8:"Nesta terrena vida, ó justo Redentor",9:"Luminosa é a senda",10:"Certamente exaltado será",11:"Ó igreja de Deus, resplandece",12:"Sempre em Jesus confiarei",13:"Confiemos em Deus",14:"Os Teus fiéis, reunidos ante a Tua presença",15:"Ó alma que choras",16:"Envia, ó Deus, por amor",17:"Com o Espírito divino",18:"É Jesus meu Refúgio",19:"Manda-nos Teu Poder",20:"Vem com Teu Poder, Senhor",21:"A volta de Cristo glorioso",22:"Guia-me, ó Senhor",23:"O Senhor é o meu Pastor",24:"Dá-me graça, Senhor",25:"Um grande bem, precioso bem",26:"Teu Espírito, ó Senhor",27:"O Senhor é minha Luz",28:"Marchemos para o céu",29:"Ó Senhor, vem conduzir-me",30:"Cristo é bom e clemente",31:"Forte Rocha",32:"Eu me escondo em Ti, Senhor",33:"Jesus é o nosso Guia",34:"O Mestre que desceu dos céus",35:"Eis que multidão mui grande",36:"O Teu manto de amor sinto estar sobre mim",37:"Se a nossa vida entregarmos a Jesus",38:"Ó Senhor, és minha Vida",39:"Eu desejo, Senhor",40:"Vem, Senhor Jesus, com virtude e fé",41:"O teu coração vem a Cristo entregar",42:"Ó minha alma, por que te abates?",43:"Eis que os montes se abalaram",44:"Sol da justiça",45:"Oh! Quanto nos amaste!",46:"Grandioso é o nosso Deus",47:"Sublime é o perdão!",48:"Quão gloriosa sinto em mim a voz do Criador!",49:"Venho adorar-Te, santo Criador",50:"Glória a Jesus! Aleluia!",51:"A Palavra do Senhor é Pão celestial",52:"Vós sois luz do mundo",53:"Nós somos luz do mundo",54:"Um tesouro glorioso achei",55:"Paz seja em vós",56:"Põe em Deus a confiança",57:"É estreita a porta para a salvação",58:"Sou crente em Jesus",59:"Ó Senhor, conduz-me avante",60:"Oh! Vem a Jesus",61:"A minha alma deseja ver-Te",62:"Ó Criador, forte Rocha és",63:"Se vós baterdes, Ele vos abre",64:"Tu, que vives sem destino",65:"Igual ao Mestre!",66:"Cansado estás? Vem a Jesus",67:"Vinde a Mim!",68:"Sem tardar, vai a Cristo",69:"Em volta de Jesus se achava a multidão",70:"Senhor, Tu és a minha Esperança",71:"Ó Jesus, meu Jesus",72:"Ao Nome do Senhor Jesus",73:"Semearei, semearei",74:"Vamos produzir frutos de louvor",75:"Vem a Jesus, ó alma errante",76:"Cristo Jesus Sua mão me dá",77:"Santa semente é a Palavra de Deus",78:"Glória a Jesus! Glória a Jesus!",79:"Entre nós está Quem nos quer para Si",80:"Por Cristo, resgatado",81:"A vida deu por ti",82:"Oh! Que grande amor!",83:"Vinde às bodas",84:"Quão amável é a Tua casa",85:"Anunciai o santo Evangelho",86:"Grande Tu és, ó Pai",87:"Eis que vem Jesus",88:"Em nome do Senhor Jesus",89:"Oh! Grande Deus",90:"Teu destino é a glória",91:"No esconderijo do Onipotente",92:"O santo Evangelho",93:"O Senhor Jesus te chama",94:"A Palavra do bom Criador é a Guia",95:"Vinde, ó benditos de Meu Pai",96:"Vinde, adoremos a Deus",97:"Cristo Jesus, nosso bom Pastor",98:"Tudo entreguemos a Cristo Jesus",99:"Jesus Cristo é o Amigo celestial",100:"Todos juntos, jubilemos",101:"Cantemos, juntos, louvores a Deus",102:"Sinto a voz divina do meu fiel Pastor",103:"Bendize, ó minha alma",104:"Santo, Santo és, Senhor",105:"Volta ao teu lar Paternal!",106:"Em nome do nosso Redentor",107:"O fim de tudo chegará",108:"É Jesus a Fonte de riqueza",109:"Vem, ó Senhor, ajudar-me",110:"Vigiai, irmãos",111:"Do sepulcro ressurgiu triunfante",112:"Irmãos, avante com nosso Rei",113:"Exaltado, aclamado",114:"Quando te sentires abatido",115:"Minha alma engrandece",116:"Amo ao Senhor",117:"Jesus habita em meu coração",118:"Estou abrigado em meu Salvador",119:"Luz aos meus pés é a Tua Palavra",120:"Nossa cruz tomemos",121:"É Deus Quem guarda a Sua igreja",122:"Eu alegrei-me quando me disseram",123:"Ó Jesus, és meu Guardião",124:"Vivo na graça",126:"Levemos a mensagem de amor",127:"Meu bom Jesus, Contigo almejo estar",128:"Teu filho sou, ó Criador",129:"Salvo estou por Jesus",130:"A minha alma",131:"Ó Senhor glorioso, Deus da perfeição",132:"Eis que estou disposto a Te obedecer",133:"Quão bom e quão suave é",134:"Teu amor, ó Cordeiro divinal",135:"Bendito o Rei que veio do céu!",136:"Benignidade eterna é a de Deus",137:"Senhor, vem selar-nos",138:"Louvemos ao bom Jesus",139:"Ó Senhor, Tu me conheces",140:"Sou feliz",141:"Cristo, o Verbo",142:"Eu imploro com todo o meu ser",143:"Jesus Cristo no céu preparou",144:"A vida eterna",145:"Pródigo filho, vai!",147:"É bom louvar ao Criador",148:"Louvor a Deus, o Criador",149:"Meus irmãos, a Deus louvemos",150:"Jesus Cristo, meu Senhor",151:"Nome bom, sem igual",152:"É na casa do Senhor",153:"O divinal Cordeiro",154:"Terá que renascer",155:"Olha a Cristo, o Redentor",156:"A esperança de entrar na glória",157:"Ouve a voz que te convida",158:"Meu lar está no céu",159:"Que glorioso amor, que sublime amor",160:"Sou o Caminho, a Verdade e a Vida",161:"Em Cristo há perdão",162:"Cristo salvou-me",163:"Neste mundo de ilusão",164:"Louvemos sempre alegres",165:"Para salvar-nos, quem veio do céu?",166:"Se muitos soubessem",167:"Água viva",168:"A Palavra do Senhor",169:"Aos pés de Deus estamos",170:"Glória! Aleluia! Ó bom Pai dos céus",171:"Vida eterna! Vida eterna!",172:"Um culto santo ao Senhor",173:"Para ouvir aqui estamos",174:"Vem atender ao Seu chamado",175:"O Senhor Jesus te chama",176:"Viver desejo só por Ti, Senhor",177:"Eu necessito achegar-me",179:"Trabalhai! Trabalhai!",180:"Jesus é a Luz que veio ao mundo",181:"Só em Cristo, só em Cristo",182:"Brevemente retornará Jesus Cristo",183:"Cristo Jesus é a Porta dos céus",184:"Nós Te louvamos, por fé, grande Deus",185:"Brilha essa Luz em mim",186:"Onde havia pranto, júbilo se ouviu",187:"Jesus Cristo habita em nós",188:"O Mestre habita em mim",189:"Oh! Que preciosa paz",190:"Amados, não temamos",191:"Em Ti, Senhor, abrigado",192:"Quão fiel promessa Jesus nos fez",193:"Nada jamais me faltará",194:"Vós chorareis e vos lamentareis",196:"É Jesus Cristo Quem nos convida",197:"Senhor, por Teu poder",198:"Sempre, com fé, procuremos agradar",199:"És minha Porção",200:"Não se turbe o vosso coração",201:"Ao voltar Jesus, estaremos",202:"Em Ti me alegro, Senhor",203:"Jesus é meu vero Amigo",204:"Contarei a todos a real grandeza",205:"Salvo por Seu poder",206:"Com Teu poder, Senhor",207:"Cristo é fiel",208:"Conserva a paz, ó minha alma",209:"Oh! Marchai, soldados",210:"Grandes promessas",211:"O Senhor Jesus passava",212:"Eis que as trevas já são passadas",213:"Quando vier do céu",214:"Como foi para os céus, assim virá",215:"Em breve ao céu irei",216:"Com toda a nossa devoção",217:"Vamos, unidos, a Deus louvar",218:"Oh! Jubilemos, devotos de Cristo",219:"Novos céus nós aguardamos",220:"Cristo voltará",221:"Reunidos se encontravam",222:"Brevemente virá o Senhor Jesus",223:"Muitos, por fé, aceitaram Jesus",224:"Só Jesus concede paz e salvação",225:"Oh! Que voz tão preciosa",226:"É a história do Evangelho que nos fala",227:"Procuras tu ao Salvador?",228:"Vem do céu alegre som",229:"Eu vivia no pecado",230:"A Ti rendemos graças",231:"Que grande amor, aleluia!",232:"Seguro estou",233:"Vamos marchar por fé",234:"O meu ser entrego a Cristo",235:"Um amor imenso",236:"Há um lugar de eterna paz",238:"Para ouvir-Te, ó Criador",239:"Eis que a noite é passada",241:"A Justiça divina",242:"Profundo é o saber de Deus, Criador",243:"É Jesus o nosso Intercessor",244:"Quando te faltam forças contra o mal",245:"Mesmo quando em aflição",246:"Resgatados fomos",247:"Se fores tentado",248:"Glória! Aleluia! Sinto Jesus",249:"Esperança e fé sustêm nossa vida",250:"Com meu Redentor viverei nos céus",251:"Firme nas mãos de Cristo",252:"Exaltação ao Deus Onipotente!",253:"Eu estava morto no pecado",255:"É Cristo a Rocha de eterna salvação",256:"Sem Deus Pai, vivi no mundo",257:"Remiu-nos por graça",258:"Louvemos ao nosso Senhor",259:"Vamos batalhar",260:"Sou servo inútil, ó Deus piedoso",261:"Vivo por Cristo",262:"Senhor, a Tua igreja",263:"Cristo é Luz resplandecente",264:"Oh! Quão feliz serei no dia",265:"Bênçãos dos céus prometidas",266:"Vinde às fileiras",267:"É maravilhosa e excelente",268:"Ó Deus bendito",269:"Ressuscitados, por graça, fomos",270:"Outro bem não procurarei",271:"Graças dou a Ti, ó bom Deus",272:"Louvarei ao bom Jesus",273:"Jesus me deu celeste hino",274:"Na plenitude estarei",275:"Avante eu vou",276:"Ó Senhor da glória",277:"Oh! Quanto é bom louvarmos",278:"Éramos mortos nas obras más",279:"Toda a arma contra ti",280:"Lutar devemos todos",281:"O Rei dos reis nos fez soldados celestiais",282:"Constantemente oremos a Deus",283:"Tenho, em meu coração, real certeza",284:"Louvor nos céus altíssimos",285:"Glória e louvor a Jesus darei",286:"Nome precioso para mim",287:"Sempre avante! Cristo é o Valente",288:"Ó irmãos, com Cristo avante",289:"Avante, sempre avante",290:"Sempre avante!",291:"Avante, avante! Unidos ao Senhor",292:"Oh! Quanto é bom o Redentor!",293:"Tu és Oleiro",294:"Avante! Coragem! Marchemos",295:"Fui, Senhor, por Ti remido",296:"Quão suave e precioso",297:"Vem, Jesus, meu Consolador",298:"Avante sempre, sem temer!",299:"Em nome de Jesus",300:"Glória ao bendito Salvador",301:"Nossa Esperança é Jesus",302:"É Jesus a Esperança",303:"O Senhor não mudará",304:"Cristo é a Esperança",305:"Oh! Que fundamento",306:"Bendizei ao Altíssimo Deus",307:"Cristo nos dará da Sua plenitude",308:"Soa a trombeta",309:"Galardão nos espera",310:"Nós Te louvamos, ó Rei dos reis",311:"Teus tesouros revelaste",312:"Tributos de louvor",313:"Arrebatado aos céus",314:"O Teu poder supremo",315:"Contempla do céu",316:"Tua vida é triste?",317:"Sempre unido a meu Jesus",318:"Ó bom Jesus! Ó Salvador!",319:"Foi Jesus Quem me salvou",320:"Que prazer é andar com Cristo",321:"Bendito seja o Deus vivente",322:"Vem, Rei eterno",323:"Oh! Não busques, ansioso",325:"Louvemos ao Rei dos reis",327:"Galardão nos dará",328:"Grande é o Teu poder, Senhor",329:"Com Cristo podes ao mal resistir",330:"Ao findar a jornada",331:"Vem a Cristo sem tardar",332:"É Cristo Quem cuida de ti",333:"Peregrino sou no mundo",334:"É nos céus, é nos céus",335:"Eu almejo nessa pátria entrar",336:"Resplandecer por Cristo vamos",337:"Por fé seguimos ao Senhor",338:"O Senhor é sempiterno",339:"Quando aqui terminar meu labor",340:"Eu subirei com Cristo à celestial Sião",341:"Com fé espera no Senhor",342:"Sião celestial",343:"Lá no céu cantaremos",344:"Vou encontrar meu Deus",345:"Louvarei, louvarei",346:"Longe do mal e perto de Ti",347:"Ontem, hoje e eternamente",348:"Em Cristo espera, sem vacilar",349:"Irmãos amados",350:"Sempre unido a Cristo devo estar",351:"Senhor, à Tua presença",352:"Sinto viva esperança",353:"Eleitos nós somos",354:"Jerusalém celestial!",355:"A Ti, Deus, eu consagrei-me",356:"Não têm valor a prata e o ouro",357:"Face a face O verei",358:"O Teu precioso sangue",359:"A nosso Deus cantemos louvor",360:"Firmes sejamos no Salvador",361:"Atribulado te encontras",362:"Que bela herança!",363:"Aos Teus pés estou, Senhor",364:"O nosso Rei não tardará!",365:"Contrito, venho a Ti",366:"Pela fé tereis vitória",367:"Ao que vive para sempre",368:"Não duvidemos, Deus nos elegeu",369:"Sentes bater em teu coração?",370:"Nós aqui estamos para, a Cristo, exaltar",371:"Em nome de Jesus, prostrar-me vou",372:"Da igreja, fiel Fundamento é Jesus",373:"Cristo Jesus, o Redentor",374:"Santo! Santo! Santo!",375:"A paz Eu vos deixo",376:"Senhor, preciso mais",377:"No céu, Senhor, no céu",378:"Grandioso és Tu",379:"Grande festa haverá nos céus",380:"Eu espero, firmemente, com Jesus ir descansar",381:"Breve virá Jesus Cristo, o Cordeiro",382:"Creio nas fiéis promessas do meu Deus",383:"Cristo é a Estrela",384:"Nos resgatou e nos lavou",385:"Vinde após Mim",386:"Não foi com ouro que Cristo nos comprou",387:"Ó Salvador, que recebeste poder",388:"Na cidade santa",389:"Cristo Jesus chama os Seus",390:"Eis que vem o Verdadeiro",391:"Que alegria sem igual",392:"Com Jesus, a Esperança",393:"Ó bom Jesus, meu caro Jesus",394:"Lá no céu cantarei",395:"Eis-Me aqui, dirá o Criador",396:"Com Jesus marchemos à eternal Sião",397:"Paz, sublime paz",398:"Não tardará a volta do Senhor",399:"És a Videira, ó Rei dos reis",401:"Revela Teu querer",402:"Ó irmãos, a Deus devemos",403:"Pela fé uma vez",404:"Por fé, recebe o grande Mestre",405:"Só o sangue de Jesus",406:"A voz de Cristo te convida: Vem!",407:"És bendito eternamente!",408:"Jesus Cristo é o Pão celeste",409:"Breve voltará Jesus Cristo",410:"O sangue precioso",411:"O vitupério de Jesus",412:"Senhor, recordamos aqui",413:"Foi por mim que morreste",414:"Teu sangue imaculado",415:"Na cruz morreu o Cordeiro",416:"No Calvário",417:"Recordemo-nos sempre do Mestre",418:"Pelo Seu sangue, certos estamos",419:"Fazei isto em memória de Mim",420:"Pela morte na cruz, nos resgatou",421:"Recorda, por fé, minha alma",422:"Jesus Cristo, fiel Cordeiro",423:"Só o sangue precioso e expiador",424:"Ó Jesus, por nós morreste",425:"Cristo Supremo",426:"Este mundo enganador",427:"Os que no Senhor dormiram",428:"O dia de Cristo bem perto está",429:"A trombeta soará",430:"Preciosa é, aos olhos do Criador",431:"Ó meninos, estamos reunidos",432:"Vem, ó divino Mestre",433:"Na santa escola",434:"A minha alma sente paz no Senhor",435:"Ó Jesus, quanto és piedoso!",436:"Alegria sinto em servir Jesus",437:"Os meninos viram Jesus passar",438:"Bem perto está dos Seus fiéis",439:"Somos jovens",440:"Lembra-te do teu Criador!",441:"Eu sou um cordeirinho",442:"Bênçãos, bênçãos Deus derramará",443:"Ó meninos, Deus vos convida",444:"Ó meninos, exaltemos",445:"Ajuntemos um tesouro eterno",446:"Vós, ó jovens do Senhor",447:"Brilha mais e mais",448:"Sou criança, Senhor",449:"As riquezas celestes eu almejo, Senhor",450:"Vamos, queridos, escolher a boa parte",451:"Jamais esquecerei Tua mercê",452:"Jesus, ó divinal Pastor",453:"Consagrados sejamos a Deus",454:"Cidadão dos céus",455:"Quão ditoso é caminhar com Jesus!",456:"Somos joias preciosas",457:"Comigo está Jesus",458:"Cristo me ama",459:"Vamos nos preparar!",460:"Vamos todos juntos cantar",461:"A Jesus, meu Senhor, minha vida consagrei",462:"Gloriosa é a história",463:"Mocidade! Vamos combater!",464:"Reunidos nós estamos",465:"Deus tem por nós imenso amor",466:"A criança consagrada",467:"Vamos com Jesus",468:"Toda a criança",469:"Pai nosso, que estás nos céus",470:"Jesus Cristo, Seus fiéis, ensina",471:"Que grande bem é andar com Cristo!",472:"Desde pequenino, Deus, o Criador",473:"Forasteiro sou no mundo",474:"Com alegria devemos servir",475:"Já desde a minha infância clamo a Ti",476:"Deixai a Mim vir os pequeninos",477:"Vinde, crianças",478:"Cedo retorna o Senhor",479:"Somos jovens consagrados",480:"Jovens, amai o conselho"};
 
-const COR=["É o sangue de Jesus","Sou feliz, muito feliz","Alegria no meu coração","Glória, aleluia","Vem, Espírito Santo","Louvai ao Senhor"];
+const CORINHOS=["É o sangue de Jesus","Sou feliz, muito feliz","Alegria no meu coração","Glória, aleluia","Vem, Espírito Santo","Louvai ao Senhor"];
+const OCC_BATISMO=new Set([41,60,64,66,67,68,75,85,93,107,154,155,157,161,163,167,174,175,181,183,223,224,227,308,316,318,323,331,369,404,405,406]);
+const OCC_SANTA_CEIA=new Set([408,410,411,412,413,414,415,416,417,418,419,420,421,422,423,424,425]);
+const OCC_FUNERAL=new Set([158,250,426,427,428,429,430]);
+const OCC_ENCERRAMENTO=new Set([172,230]);
 
-// Ocasiões
-const OCC={batismo:new Set([85,41,60,64,66,67,68,75,93,107,154,155,157,161,163,167,174,175,181,183,223,224,227,308,316,318,323,331,369,404,405,406]),santa_ceia:new Set([412,415,417,425,419,408,410,411,413,414,416,418,420,421,422,423,424]),funeral:new Set([158,250,426,427,428,429,430]),encerramento:new Set([230,172])};
-const OCC_LABEL={batismo:"Batismo",santa_ceia:"S. Ceia",funeral:"Funeral",encerramento:"Enc."};
-const OCC_COLOR={batismo:"#38BDF8",santa_ceia:"#E8B931",funeral:"#94A3B8",encerramento:"#C084FC"};
-
-// Gera hinos
 const hymns=[];
-for(let i=1;i<=480;i++){
-    const id=`hino-${i}`;
-    let occ=null;
-    for(const[k,s]of Object.entries(OCC))if(s.has(i)){occ=k;break}
-    hymns.push({id,type:'hino',num:i,title:T[i]||`Hino ${i}`,isJovem:i>=431&&i<=480,occ});
-}
-for(let i=0;i<6;i++)hymns.push({id:`corinho-${i+1}`,type:'corinho',num:i+1,title:COR[i],isJovem:false,occ:null});
+for(let i=1;i<=480;i++){const h={id:`hino-${i}`,type:'hino',num:i,title:T[i]||`Hino ${i}`,isJovem:i>=431&&i<=480,occasions:[]};if(OCC_BATISMO.has(i))h.occasions.push('batismo');if(OCC_SANTA_CEIA.has(i))h.occasions.push('santa_ceia');if(OCC_FUNERAL.has(i))h.occasions.push('funeral');if(OCC_ENCERRAMENTO.has(i))h.occasions.push('encerramento');hymns.push(h);}
+for(let i=0;i<6;i++)hymns.push({id:`corinho-${i+1}`,type:'corinho',num:i+1,title:CORINHOS[i],isJovem:false,occasions:[]});
+const ALL_LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-const LETTERS='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-const PP=60;
-let st={f:'all',s:'',p:1,sel:null,data:{}};
-const SK='hinario-ccb-v3';
+const PER_PAGE=60;
+let state={filter:'all',search:'',page:1,selected:null,data:{}};
+const STORAGE_KEY='hinario-ccb-progress';
+function loadData(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)state.data=JSON.parse(r);}catch(e){state.data={};}}
+function saveData(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state.data));}catch(e){}}
 
-function ld(){try{const r=localStorage.getItem(SK);if(r)st.data=JSON.parse(r)}catch(e){st.data={}}}
-function sv(){try{localStorage.setItem(SK,JSON.stringify(st.data))}catch(e){}}
+// METRÔNOMO
+const TIME_SIGS=[{sig:'2/4',beats:2},{sig:'3/4',beats:3},{sig:'4/4',beats:4},{sig:'2/2',beats:2},{sig:'3/2',beats:3},{sig:'6/4',beats:6},{sig:'6/8',beats:2},{sig:'9/8',beats:3},{sig:'12/8',beats:4},{sig:'9/4',beats:9}];
+let metro={playing:false,bpm:80,timeSig:'4/4',beats:4,currentBeat:-1,intervalId:null,audioCtx:null};
+function metroInitAudio(){if(!metro.audioCtx)metro.audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(metro.audioCtx.state==='suspended')metro.audioCtx.resume();}
+function metroTick(d){if(!metro.audioCtx)return;const c=metro.audioCtx,o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=d?1000:700;o.type='sine';const n=c.currentTime;g.gain.setValueAtTime(d?0.35:0.2,n);g.gain.exponentialRampToValueAtTime(.001,n+.06);o.start(n);o.stop(n+.06);}
+function metroStep(){metro.currentBeat=(metro.currentBeat+1)%metro.beats;metroTick(metro.currentBeat===0);metroUpdateDots();}
+function metroUpdateDots(){document.querySelectorAll('.metronome-dot').forEach((d,i)=>d.classList.toggle('active',i===metro.currentBeat));}
+function metroStart(){metroInitAudio();metro.playing=true;metro.currentBeat=-1;metro.intervalId=setInterval(metroStep,60000/metro.bpm);metroStep();metroUpdatePlayBtn();}
+function metroStop(){metro.playing=false;clearInterval(metro.intervalId);metro.intervalId=null;metro.currentBeat=-1;metroUpdateDots();metroUpdatePlayBtn();}
+function metroToggle(){metro.playing?metroStop():metroStart();}
+function metroSetBpm(v){metro.bpm=Math.max(20,Math.min(240,parseInt(v)));document.getElementById('bpmValue').textContent=metro.bpm;document.getElementById('bpmSlider').value=metro.bpm;if(metro.playing){clearInterval(metro.intervalId);metro.intervalId=setInterval(metroStep,60000/metro.bpm);}}
+function metroSetTimeSig(s){metro.timeSig=s;const f=TIME_SIGS.find(t=>t.sig===s);metro.beats=f?f.beats:4;metro.currentBeat=-1;metroRenderDots();metroUpdateBeatBtns();}
+function metroRenderDots(){const c=document.getElementById('metronomeDots');if(!c)return;c.innerHTML='';for(let i=0;i<metro.beats;i++){const d=document.createElement('div');d.className='metronome-dot'+(i===0?' downbeat':'');c.appendChild(d);}}
+function metroUpdateBeatBtns(){document.querySelectorAll('.beat-btn').forEach(b=>b.classList.toggle('active-beat',b.dataset.sig===metro.timeSig));}
+function metroUpdatePlayBtn(){const b=document.getElementById('metronomeToggle');if(!b)return;if(metro.playing){b.innerHTML='<i class="fas fa-pause text-sm"></i>';b.style.background='rgba(201,168,76,.2)';b.style.color='#C9A84C';b.style.borderColor='rgba(201,168,76,.3)';}else{b.innerHTML='<i class="fas fa-play text-sm"></i>';b.style.background='';b.style.color='';b.style.borderColor='';}}
+function metroBpmAdjust(d){metroSetBpm(metro.bpm+d);}
 
-function gf(){
-    let l=hymns;const f=st.f;
-    if(f==='hinos')l=l.filter(h=>h.type==='hino');
-    else if(f==='corinhos')l=l.filter(h=>h.type==='corinho');
-    else if(f==='adultos')l=l.filter(h=>h.type==='hino'&&!h.isJovem);
-    else if(f==='jovens')l=l.filter(h=>h.isJovem);
-    else if(f.startsWith('occ-'))l=l.filter(h=>h.occ===f.replace('occ-',''));
-    else if(f.startsWith('range-')){const[a,b]=f.replace('range-','').split('-').map(Number);l=l.filter(h=>h.type==='hino'&&h.num>=a&&h.num<=b)}
-    else if(f.startsWith('letter-')){const lt=f.replace('letter-','');l=l.filter(h=>h.title.charAt(0).toUpperCase()===lt)}
-    else if(f==='green')l=l.filter(h=>st.data[h.id]?.status==='green');
-    else if(f==='yellow')l=l.filter(h=>st.data[h.id]?.status==='yellow');
-    else if(f==='red')l=l.filter(h=>st.data[h.id]?.status==='red');
-    else if(f==='none')l=l.filter(h=>!st.data[h.id]?.status);
-    if(st.s.trim()){const q=st.s.trim().toLowerCase();l=l.filter(h=>h.num.toString().includes(q)||h.title.toLowerCase().includes(q))}
-    return l;
-}
+// PDF (LEITURA LOCAL COM ZOOM E SCROLL)
+const PDF_FILES = {'C':'dó.pdf','D':'ré.pdf','E':'mi.pdf','F':'fá.pdf','G':'sol.pdf','A':'lá.pdf','B':'si.pdf'};
+let pdfDocs = {}; 
+let currentPdfKey = null;
+let currentPdfPage = 1;
+let currentPdfTotalPages = 1;
+let currentZoom = 1.0;
 
-function gs(){
-    let g=0,y=0,r=0,j=0;hymns.forEach(h=>{const s=st.data[h.id]?.status;if(s==='green')g++;else if(s==='yellow')y++;else if(s==='red')r++;if(h.isJovem&&s)j++});
-    const m=g+y+r;return{g,y,r,n:hymns.length-m,m,t:hymns.length,j};
-}
-
-function rs(){
-    const s=gs();
-    document.getElementById('sG').textContent=s.g;document.getElementById('sY').textContent=s.y;
-    document.getElementById('sR').textContent=s.r;document.getElementById('sN').textContent=s.n;
-    document.getElementById('sJ').textContent=s.j;document.getElementById('cG').textContent=s.g;
-    document.getElementById('cY').textContent=s.y;document.getElementById('cR').textContent=s.r;
-    document.getElementById('cN').textContent=s.n;
-    const pG=s.t?(s.g/s.t*100):0,pY=s.t?(s.y/s.t*100):0,pR=s.t?(s.r/s.t*100):0;
-    document.getElementById('bG').style.width=pG+'%';document.getElementById('bY').style.width=pY+'%';
-    document.getElementById('bR2').style.width=pR+'%';document.getElementById('pP').textContent=Math.round(pG+pY+pR)+'%';
-    const l=document.getElementById('pL');
-    if(s.m===0)l.textContent='Nenhum hino marcado ainda';
-    else if(s.m===s.t)l.textContent='Todos os hinos foram marcados!';
-    else l.textContent=`${s.m} de ${s.t} — ${s.g} bons, ${s.y} praticando, ${s.r} difíceis`;
+async function loadPdf(key) {
+    if (pdfDocs[key]) return; 
+    const filename = PDF_FILES[key];
+    if (!filename) { pdfDocs[key] = { doc: null, totalPages: 0 }; return; }
+    try {
+        const response = await fetch(filename);
+        if (!response.ok) throw new Error('Arquivo não encontrado');
+        const arrayBuffer = await response.arrayBuffer();
+        const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+        const pdfDoc = await loadingTask.promise;
+        pdfDocs[key] = { doc: pdfDoc, totalPages: pdfDoc.numPages };
+    } catch (error) {
+        console.error('Erro ao carregar o PDF:', error);
+        pdfDocs[key] = { doc: null, totalPages: 0, error: true }; 
+    }
 }
 
-function gfl(f){
-    const m={all:'Todos',hinos:'Hinos',corinhos:'Corinhos',adultos:'Adultos',jovens:'Jovens','range-1-100':'001–100','range-101-200':'101–200','range-201-300':'201–300','range-301-400':'301–400','range-401-430':'401–430','range-431-480':'431–480 (Jovens)',green:'Bom',yellow:'Praticar',red:'Difícil',none:'Sem marcação','occ-batismo':'Batismo','occ-santa_ceia':'Santa Ceia','occ-funeral':'Funeral','occ-encerramento':'Encerramento'};
-    if(f.startsWith('letter-'))return`Letra ${f.replace('letter-','')}`;return m[f]||'';
+function calcPage(hymnNum) {
+    if (hymnNum >= 1 && hymnNum <= 430) return hymnNum + 2; 
+    else if (hymnNum >= 431 && hymnNum <= 480) return 468 + (hymnNum - 431);
+    else return 522; // Corinhos
 }
 
-function rg(){
-    const fl=gf(),tp=Math.max(1,Math.ceil(fl.length/PP));
-    if(st.p>tp)st.p=tp;const si=(st.p-1)*PP,pi=fl.slice(si,si+PP);
-    document.getElementById('hF').textContent=st.f!=='all'?gfl(st.f):'';
-    document.getElementById('hI').textContent=`${fl.length} item${fl.length!==1?'s':''}`;
-    const g=document.getElementById('hG'),e=document.getElementById('eS');
-    if(!pi.length){g.innerHTML='';e.classList.remove('hidden');e.classList.add('flex','flex-col')}
-    else{e.classList.add('hidden');e.classList.remove('flex','flex-col');
-    g.innerHTML=pi.map((h,i)=>{
-        const d=st.data[h.id],sc=d?.status?`s${d?.status[0]}`:'',isC=h.type==='corinho';
-        const ns=isC?`C${h.num}`:String(h.num).padStart(3,'0');
-        let tag='';
-        if(h.occ)tag=`<span class="ot" style="color:${OCC_COLOR[h.occ]};background:${OCC_COLOR[h.occ]}15">${OCC_LABEL[h.occ]}</span>`;
-        const jv=h.isJovem?'<span class="ot" style="color:#A78BFA;background:#A78BFA15">J</span>':'';
-        return`<div class="hc ${sc} ca" style="animation-delay:${Math.min(i*10,300)}ms" onclick="oP('${h.id}')">
-            <div class="flex items-start justify-between mb-0.5">
-                <span class="text-base font-bold text-tx leading-none">${ns}</span>
-                <div class="flex items-center gap-1">${jv}${tag}${d?.note?.trim()?'<i class="fas fa-sticky-note text-[7px] text-acc/40"></i>':''}${d?.status?`<span class="w-1.5 h-1.5 rounded-full" style="background:${d.status==='green'?'#34D399':d.status==='yellow'?'#FBBF24':'#F87171'}"></span>`:''}</div>
-            </div>
-            <p class="text-[10.5px] text-tx-2 leading-snug lc2">${h.title}</p>
-        </div>`}).join('')}
-    rpg(fl.length,tp);
+let currentHymnNum = null; // Guarda o número do hino para saber quantas páginas ele tem
+
+// Função inteligente: Descobre em qual página o PRÓXIMO hino começa
+function calcNextPage(hymnNum) {
+    if (hymnNum >= 1 && hymnNum <= 429) return (hymnNum + 1) + 2;
+    if (hymnNum === 430) return 468;
+    if (hymnNum >= 431 && hymnNum <= 479) return 468 + ((hymnNum + 1) - 431);
+    if (hymnNum === 480) return 522;
+    return currentPdfTotalPages + 1; // Se for corinho, vai até o fim
 }
 
-function rpg(t,tp){
-    const c=document.getElementById('pg');if(tp<=1){c.innerHTML='';return}
-    let h=`<button onclick="gP(${st.p-1})" class="w-8 h-8 flex items-center justify-center rounded-lg text-xs ${st.p===1?'text-tx-3/30 cursor-not-allowed':'text-tx-2 hover:bg-card hover:text-tx'}" ${st.p===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
-    const r=gpr(st.p,tp);r.forEach(p=>{if(p==='...')h+='<span class="w-8 h-8 flex items-center justify-center text-tx-3 text-xs">...</span>';
-    else h+=`<button onclick="gP(${p})" class="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold ${p===st.p?'bg-acc/15 text-acc':'text-tx-2 hover:bg-card hover:text-tx'}">${p}</button>`});
-    h+=`<button onclick="gP(${st.p+1})" class="w-8 h-8 flex items-center justify-center rounded-lg text-xs ${st.p===tp?'text-tx-3/30 cursor-not-allowed':'text-tx-2 hover:bg-card hover:text-tx'}" ${st.p===tp?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
-    c.innerHTML=h;
+async function openPdf(hymnNum) {
+    const key = document.getElementById('tonalitySelect').value;
+    if (!key) { showToast('Selecione uma tonalidade primeiro', 'fa-exclamation-triangle', 'text-s-yellow'); return; }
+    await loadPdf(key);
+    if (pdfDocs[key]?.doc) {
+        currentPdfKey = key;
+        currentZoom = 1.0; updateZoomDisplay();
+        currentPdfPage = calcPage(hymnNum);
+        currentPdfTotalPages = pdfDocs[key].totalPages;
+        const tonLabels = { C:'Dó (C)', D:'Ré (D)', E:'Mi (E)', F:'Fá (F)', G:'Sol (G)', A:'Lá (A)', B:'Si (B)' };
+        document.getElementById('pdfTitle').textContent = `Hinário ${tonLabels[key]} - Hino ${hymnNum}`;
+        document.getElementById('pdfModal').classList.remove('hidden');
+        document.getElementById('pdfModal').style.display = 'flex';
+        await renderPdfPage(currentPdfPage);
+    } else {
+        const filename = PDF_FILES[key];
+        if (filename) { showToast('Abrindo PDF em nova aba...', 'fa-external-link-alt', 'text-s-yellow'); window.open(filename, '_blank'); }
+    }
 }
-function gpr(c,t){if(t<=7)return Array.from({length:t},(_,i)=>i+1);if(c<=4)return[1,2,3,4,5,'...',t];if(c>=t-3)return[1,'...',t-4,t-3,t-2,t-1,t];return[1,'...',c-1,c,c+1,'...',t]}
-function gP(p){const t=Math.max(1,Math.ceil(gf().length/PP));if(p<1||p>t)return;st.p=p;rg();window.scrollTo({top:0,behavior:'smooth'})}
 
-function oP(id){
-    st.sel=id;const h=hymns.find(x=>x.id===id);if(!h)return;
-    const d=st.data[id]||{},isC=h.type==='corinho',ns=isC?`Corinho ${h.num}`:`Hino ${h.num}`;
-    const sl={green:'Bom — consigo tocar bem',yellow:'Praticar — preciso treinar mais',red:'Difícil — não consigo tocar'};
-    let occH='';if(h.occ)occH=`<div class="flex items-center gap-2 mt-2"><span class="ot" style="color:${OCC_COLOR[h.occ]};background:${OCC_COLOR[h.occ]}15">${OCC_LABEL[h.occ]}</span><span class="text-[11px] text-tx-3">Hino para ${OCC_LABEL[h.occ]==='S. Ceia'?'Santa Ceia':OCC_LABEL[h.occ].toLowerCase()}</span></div>`;
-    document.getElementById('pC').innerHTML=`
-    <div>
-        <div class="flex items-center gap-2 mb-1">
-            <span class="text-3xl font-display font-bold text-acc">${isC?'C'+h.num:String(h.num).padStart(3,'0')}</span>
-            ${h.isJovem?'<span class="text-[9px] uppercase tracking-wider text-s-jovem font-bold bg-s-jovem/10 px-2 py-0.5 rounded-full">Jovem</span>':''}
-            ${isC?'<span class="text-[9px] uppercase tracking-wider text-acc/70 font-bold bg-acc/10 px-2 py-0.5 rounded-full">Corinho</span>':''}
-        </div>
-        <h2 class="text-lg font-bold text-tx leading-snug mt-1.5">${h.title}</h2>
-        <p class="text-tx-3 text-sm mt-0.5">${ns} do Hinário CCB</p>
-        ${occH}
-        ${d.lastUpdated?`<p class="text-tx-3 text-[10px] mt-2"><i class="far fa-clock mr-1"></i>Atualizado: ${new Date(d.lastUpdated).toLocaleString('pt-BR')}</p>`:''}
-    </div>
-    <div>
-        <p class="text-[9px] font-bold text-tx-3 uppercase tracking-wider mb-2.5">Status de Prática</p>
-        <div class="grid grid-cols-3 gap-2">
-            <button class="sb ${d.status==='green'?'g1':''}" onclick="sS('${id}','green')"><i class="fas fa-check-circle text-lg"></i><span>Bom</span></button>
-            <button class="sb ${d.status==='yellow'?'y1':''}" onclick="sS('${id}','yellow')"><i class="fas fa-exclamation-circle text-lg"></i><span>Praticar</span></button>
-            <button class="sb ${d.status==='red'?'r1':''}" onclick="sS('${id}','red')"><i class="fas fa-times-circle text-lg"></i><span>Difícil</span></button>
-        </div>
-        ${d.status?`<p class="text-[11px] text-tx-3 mt-2 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:${d.status==='green'?'#34D399':d.status==='yellow'?'#FBBF24':'#F87171'}"></span>${sl[d.status]}</p>`:''}
-        ${d.status?`<button onclick="sS('${id}',null)" class="text-[11px] text-tx-3 hover:text-tx-2 mt-1 transition-colors"><i class="fas fa-undo mr-1"></i>Remover marcação</button>`:''}
-    </div>
-    <div>
-        <p class="text-[9px] font-bold text-tx-3 uppercase tracking-wider mb-2.5">Notas de Prática</p>
-        <textarea id="nA" class="na" placeholder="Ex: Foco no contra-canto, praticar compasso 3/4...">${d.note||''}</textarea>
-        <p class="text-[10px] text-tx-3 mt-1">Salvo automaticamente</p>
-    </div>
-    <div class="pt-3 border-t border-bdr">
-        <p class="text-[9px] font-bold text-tx-3 uppercase tracking-wider mb-2.5">Navegação</p>
-        <div class="flex gap-2">
-            <button onclick="nH('${id}',-1)" class="flex-1 py-2.5 rounded-lg bg-card border border-bdr text-sm text-tx-2 hover:text-tx hover:border-bdr-h transition-colors"><i class="fas fa-arrow-left mr-1.5 text-xs"></i>Anterior</button>
-            <button onclick="nH('${id}',1)" class="flex-1 py-2.5 rounded-lg bg-card border border-bdr text-sm text-tx-2 hover:text-tx hover:border-bdr-h transition-colors">Próximo<i class="fas fa-arrow-right ml-1.5 text-xs"></i></button>
-        </div>
-    </div>`;
-    const nA=document.getElementById('nA');let tm=null;
-    nA.addEventListener('input',()=>{clearTimeout(tm);tm=setTimeout(()=>{if(!st.data[id])st.data[id]={};st.data[id].note=nA.value;st.data[id].lastUpdated=new Date().toISOString();sv();rg()},500)});
-    document.getElementById('dP').classList.add('pe');document.getElementById('pO').classList.remove('hidden');
+async function renderPdfPage(num) {
+    const doc = pdfDocs[currentPdfKey]?.doc;
+    if (!doc) return;
+    
+    num = Math.max(1, Math.min(num, currentPdfTotalPages));
+    currentPdfPage = num;
+    
+    // Atualiza o texto para mostrar o intervalo de páginas
+    const nextPage = Math.min(num + 1, currentPdfTotalPages);
+    const pageInfoText = (window.innerWidth >= 768 && nextPage > num) ? `Pág. ${num}-${nextPage}` : `Pág. ${num}`;
+    document.getElementById('pdfPageInfo').textContent = `${pageInfoText} de ${currentPdfTotalPages}`;
+
+    const container = document.getElementById('pdfViewerContainer');
+    if (!container) return;
+
+    // SEGURANÇA: Se a div pdfPagesWrapper não existir no HTML, ele cria uma agora
+    let wrapper = document.getElementById('pdfPagesWrapper');
+    if (!wrapper) {
+        // Apaga o canvas velho se ele ainda existir lá
+        const oldCanvas = document.getElementById('pdfCanvas');
+        if (oldCanvas) oldCanvas.remove();
+        
+        // Cria a nova div
+        wrapper = document.createElement('div');
+        wrapper.id = 'pdfPagesWrapper';
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '16px';
+        wrapper.style.justifyContent = 'center';
+        container.appendChild(wrapper);
+    }
+    
+    wrapper.innerHTML = ''; // Limpa as páginas anteriores
+
+    // Se a tela for grande (PC), divide o espaço por 2. Se for celular, usa 1 página.
+    const isWideScreen = window.innerWidth >= 768;
+    const pagesToRender = (isWideScreen && isSpreadMode) ? 2 : 1;
+    const availableWidth = container.clientWidth - 40; 
+    const widthPerPage = availableWidth / pagesToRender;
+
+    try {
+        for (let i = 0; i < pagesToRender; i++) {
+            const pageNum = num + i;
+            if (pageNum > currentPdfTotalPages) break; 
+
+            const page = await doc.getPage(pageNum);
+            const originalViewport = page.getViewport({ scale: 1 });
+            
+            // Calcula a escala para caber perfeitamente
+            const baseScale = widthPerPage / originalViewport.width;
+            const finalScale = baseScale * currentZoom; 
+            
+            const viewport = page.getViewport({ scale: finalScale });
+
+            // Cria um canvas dinâmico para cada página
+            const canvas = document.createElement('canvas');
+            canvas.style.maxWidth = '100%';
+            canvas.style.height = 'auto';
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            wrapper.appendChild(canvas);
+
+            // Desenha a página no canvas
+            await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+        }
+    } catch (e) {
+        console.error('Erro ao renderizar página:', e);
+    }
 }
-function cP(){document.getElementById('dP').classList.remove('pe');document.getElementById('pO').classList.add('hidden');st.sel=null}
-function sS(id,s){if(!st.data[id])st.data[id]={};if(s){st.data[id].status=s;st.data[id].lastUpdated=new Date().toISOString()}else{delete st.data[id].status;if(!st.data[id].note)delete st.data[id]}sv();rg();rs();oP(id)}
-function nH(c,d){const l=gf(),i=l.findIndex(h=>h.id===c);if(i===-1)return;const n=i+d;if(n<0||n>=l.length)return;oP(l[n].id)}
-function tS(){document.getElementById('sidebar').classList.toggle('-translate-x-full');document.getElementById('sO').classList.toggle('hidden')}
 
-function rlg(){
-    const ls=new Set();hymns.forEach(h=>ls.add(h.title.charAt(0).toUpperCase()));
-    document.getElementById('lG').innerHTML=LETTERS.map(l=>`<button class="lb ${ls.has(l)?'':'off'}" data-l="${l}">${l}</button>`).join('');
+let isSpreadMode = true; // Começa ligado (2 páginas no PC)
+
+function toggleSpreadMode() {
+    isSpreadMode = !isSpreadMode;
+    const btn = document.getElementById('btnSpread');
+    // Muda a cor do botão para saber se está ativo
+    btn.style.color = isSpreadMode ? '#C9A84C' : '';
+    btn.title = isSpreadMode ? 'Modo Duplo (Ativado)' : 'Modo Único (Ativado)';
+    // Re-desenha o PDF com a nova configuração
+    renderPdfPage(currentPdfPage); 
 }
-document.getElementById('lG').addEventListener('click',e=>{const b=e.target.closest('.lb');if(!b||b.classList.contains('off'))return;const l=b.dataset.l;st.f=st.f===`letter-${l}`?'all':`letter-${l}`;st.p=1;uA();rg();if(window.innerWidth<768)tS()});
 
-function eJ(){const b=new Blob([JSON.stringify({version:3,exportDate:new Date().toISOString(),app:'hinario-ccb-estudo',data:st.data},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`hinario-ccb-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);sT('Progresso exportado!','fa-file-export','text-acc')}
-function iJ(f){const r=new FileReader();r.onload=e=>{try{const p=JSON.parse(e.target.result);if(!p.data||typeof p.data!=='object'){sT('Arquivo inválido','fa-exclamation-triangle','text-s-red');return}let c=0;for(const[id,v]of Object.entries(p.data)){if(v.status||(v.note&&v.note.trim())){st.data[id]={status:v.status||null,note:v.note||'',lastUpdated:v.lastUpdated||new Date().toISOString()};c++}}sv();rg();rs();sT(`${c} hino(s) importado(s)!`,'fa-file-import','text-acc')}catch(er){sT('Erro ao ler arquivo','fa-exclamation-triangle','text-s-red')}};r.readAsText(f)}
+function pdfPrevPage() { 
+    // Se estiver em modo duplo no PC, volta 2. Senão, volta 1.
+    const step = (window.innerWidth >= 768 && isSpreadMode) ? 2 : 1; 
+    if (currentPdfPage > 1) renderPdfPage(currentPdfPage - step); 
+}
 
-let cCb=null;
-function sCo(t,m,cb,bt,bc){document.getElementById('cT').textContent=t;document.getElementById('cX').textContent=m;const b=document.getElementById('cB');b.textContent=bt||'Confirmar';b.className=`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${bc||'bg-s-red/15 text-s-red hover:bg-s-red/25'}`;cCb=cb;const m2=document.getElementById('cM');m2.classList.remove('hidden');m2.classList.add('flex')}
-function cC(){const m=document.getElementById('cM');m.classList.add('hidden');m.classList.remove('flex');cCb=null}
-document.getElementById('cB').addEventListener('click',()=>{if(cCb)cCb();cC()});
-document.getElementById('cM').addEventListener('click',e=>{if(e.target===document.getElementById('cM'))cC()});
+function pdfNextPage() { 
+    // Se estiver em modo duplo no PC, avança 2. Senão, avança 1.
+    const step = (window.innerWidth >= 768 && isSpreadMode) ? 2 : 1; 
+    if (currentPdfPage < currentPdfTotalPages) renderPdfPage(currentPdfPage + step); 
+}
 
-let tTm=null;
-function sT(m,i,c){const t=document.getElementById('to');document.getElementById('tM').textContent=m;document.getElementById('tI').className=`fas ${i||'fa-check-circle'} ${c||'text-s-green'}`;t.classList.add('ts');clearTimeout(tTm);tTm=setTimeout(()=>t.classList.remove('ts'),3000)}
+function pdfZoomIn() { 
+    currentZoom = Math.min(3.0, currentZoom + 0.25); 
+    updateZoomDisplay(); 
+    renderPdfPage(currentPdfPage); 
+}
 
-function rnd(){const r=hymns.filter(h=>st.data[h.id]?.status==='red'),y=hymns.filter(h=>st.data[h.id]?.status==='yellow'),n=hymns.filter(h=>!st.data[h.id]?.status);let p=r.length?r:y.length?y:n.length?n:hymns;const pk=p[Math.floor(Math.random()*p.length)];oP(pk.id);let h=r.length?' (priorizando difíceis)':y.length?' (priorizando praticar)':'';sT(`${pk.type==='corinho'?'Corinho':'Hino'} ${pk.num} selecionado${h}`,'fa-dice','text-acc')}
+function pdfZoomOut() { 
+    currentZoom = Math.max(0.5, currentZoom - 0.25); 
+    updateZoomDisplay(); 
+    renderPdfPage(currentPdfPage); 
+}
 
-function uA(){document.querySelectorAll('#nM .nb,#nC .nb,#nR .nb,#nS .nb,#nO .nb').forEach(b=>b.classList.toggle('on',b.dataset.f===st.f));document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',st.f===`letter-${b.dataset.l}`))}
+function updateZoomDisplay() { 
+    const el = document.getElementById('pdfZoomLevel'); 
+    if (el) el.textContent = Math.round(currentZoom * 100) + '%'; 
+}
 
-['nM','nC','nR','nS','nO'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{const b=e.target.closest('.nb');if(!b)return;st.f=b.dataset.f;st.p=1;uA();rg();if(window.innerWidth<768)tS()})});
+function closePdfModal() {
+    document.getElementById('pdfModal').classList.add('hidden');
+    document.getElementById('pdfModal').style.display = '';
+    currentZoom = 1.0; 
+    updateZoomDisplay();
+    const wrapper = document.getElementById('pdfPagesWrapper');
+    if(wrapper) wrapper.innerHTML = ''; 
+}
 
-let sTm=null;
-document.getElementById('sI').addEventListener('input',e=>{clearTimeout(sTm);sTm=setTimeout(()=>{st.s=e.target.value;st.p=1;rg()},200)});
-document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();document.getElementById('sI').focus()}if(e.key==='Escape'){cP();cC()}});
-document.getElementById('bE').addEventListener('click',eJ);
-document.getElementById('bI').addEventListener('click',()=>document.getElementById('fI').click());
-document.getElementById('fI').addEventListener('change',e=>{if(e.target.files.length>0){iJ(e.target.files[0]);e.target.value=''}});
-document.getElementById('bC').addEventListener('click',()=>{sCo('Limpar todos os dados?','Vai apagar todas as marcações e notas.',()=>{st.data={};sv();rg();rs();cP();sT('Dados removidos','fa-trash-alt','text-s-red')},'Limpar tudo','bg-s-red/15 text-s-red hover:bg-s-red/25')});
-document.getElementById('bR').addEventListener('click',rnd);
+function onTonalityChange(val) { 
+    if (val) loadPdf(val); 
+}
 
-ld();rlg();rs();rg();
+// FILTRAGEM
+function getFilteredHymns(){let list=hymns;const f=state.filter;if(f==='hinos')list=list.filter(h=>h.type==='hino');else if(f==='corinhos')list=list.filter(h=>h.type==='corinho');else if(f==='adultos')list=list.filter(h=>h.type==='hino'&&!h.isJovem);else if(f==='jovens')list=list.filter(h=>h.isJovem);else if(f==='occ-batismo')list=list.filter(h=>h.occasions.includes('batismo'));else if(f==='occ-santa_ceia')list=list.filter(h=>h.occasions.includes('santa_ceia'));else if(f==='occ-funeral')list=list.filter(h=>h.occasions.includes('funeral'));else if(f==='occ-encerramento')list=list.filter(h=>h.occasions.includes('encerramento'));
+if(f.startsWith('range-')){const[a,b]=f.replace('range-','').split('-').map(Number);list=list.filter(h=>h.type==='hino'&&h.num>=a&&h.num<=b);}
+if(f.startsWith('letter-')){const l=f.replace('letter-','');list=list.filter(h=>h.title.charAt(0).toUpperCase()===l);}
+if(f==='green')list=list.filter(h=>state.data[h.id]?.status==='green');else if(f==='yellow')list=list.filter(h=>state.data[h.id]?.status==='yellow');else if(f==='red')list=list.filter(h=>state.data[h.id]?.status==='red');else if(f==='none')list=list.filter(h=>!state.data[h.id]?.status);
+if(state.search.trim()){const q=state.search.trim().toLowerCase();list=list.filter(h=>h.num.toString().includes(q)||h.title.toLowerCase().includes(q));}return list;}
+
+// ESTATÍSTICAS
+function getStats(){let g=0,y=0,r=0,j=0;hymns.forEach(h=>{const s=state.data[h.id]?.status;if(s==='green')g++;else if(s==='yellow')y++;else if(s==='red')r++;if(h.isJovem&&s)j++;});const m=g+y+r;return{green:g,yellow:y,red:r,none:hymns.length-m,marked:m,total:hymns.length,jovensMarked:j};}
+function renderStats(){const s=getStats();document.getElementById('statGreen').textContent=s.green;document.getElementById('statYellow').textContent=s.yellow;document.getElementById('statRed').textContent=s.red;document.getElementById('statNone').textContent=s.none;document.getElementById('statJovens').textContent=s.jovensMarked;document.getElementById('countGreen').textContent=s.green;document.getElementById('countYellow').textContent=s.yellow;document.getElementById('countRed').textContent=s.red;document.getElementById('countNone').textContent=s.none;const pG=s.total?(s.green/s.total*100):0,pY=s.total?(s.yellow/s.total*100):0,pR=s.total?(s.red/s.total*100):0;
+document.getElementById('barGreen').style.width=pG+'%';document.getElementById('barYellow').style.width=pY+'%';document.getElementById('barRed').style.width=pR+'%';
+document.getElementById('progressPercent').textContent=Math.round(pG+pY+pR)+'%';
+const l=document.getElementById('progressLabel');
+if(s.marked===0)l.textContent='Nenhum hino marcado ainda';else if(s.marked===s.total)l.textContent='Todos os hinos foram marcados!';else l.textContent=`${s.marked} de ${s.total} — ${s.green} bons, ${s.yellow} praticando, ${s.red} difíceis`;}
+
+// GRID
+function renderGrid(){const filtered=getFilteredHymns();const tp=Math.max(1,Math.ceil(filtered.length/PER_PAGE));if(state.page>tp)state.page=tp;const start=(state.page-1)*PER_PAGE;const items=filtered.slice(start,start+PER_PAGE);
+const grid=document.getElementById('hymnGrid');const empty=document.getElementById('emptyState');
+if(items.length===0){grid.innerHTML='';empty.classList.remove('hidden');empty.classList.add('flex','flex-col');}
+else{empty.classList.add('hidden');empty.classList.remove('flex','flex-col');
+grid.innerHTML=items.map((h,i)=>{const d=state.data[h.id];const sc=d?.status?`status-${d.status}`:'';const n=h.type==='corinho'?`C${h.num}`:String(h.num).padStart(3,'0');
+const oT=h.occasions.map(o=>{const c={batismo:'bg-occ-bt/15 text-occ-bt',santa_ceia:'bg-occ-sc/15 text-occ-sc',funeral:'bg-occ-fu/15 text-occ-fu',encerramento:'bg-occ-en/15 text-occ-en'};const l={batismo:'Bt',santa_ceia:'SC',funeral:'Fu',encerramento:'En'};return`<span class="text-[7px] font-bold uppercase px-1 py-px rounded ${c[o]}">${l[o]}</span>`;}).join('');
+return`<div class="hymn-card ${sc} card-animate" style="animation-delay:${Math.min(i*10,300)}ms" onclick="openPanel('${h.id}')">
+<div class="flex items-start justify-between mb-0.5">
+<span class="text-lg font-bold text-tx leading-none">${n}</span>
+<div class="flex items-center gap-1">
+ ${h.isJovem?'<span class="text-[7px] uppercase tracking-wider text-s-jovem/70 font-bold bg-s-jovem/10 px-1.5 py-px rounded">J</span>':''}
+ ${oT}
+ ${d?.note?.trim()?'<i class="fas fa-sticky-note text-[8px] text-acc/40"></i>':''}
+ ${d?.status?`<span class="w-1.5 h-1.5 rounded-full" style="background:${d.status==='green'?'#34D399':d.status==='yellow'?'#FBBF24':'#F87171'}"></span>`:''}
+</div></div>
+<p class="text-[11px] text-tx-2 leading-snug line-clamp-2">${h.title}</p>
+</div>`;}).join('');}renderPagination(filtered.length,tp);}
+
+function renderPagination(total,tp){const c=document.getElementById('pagination');if(tp<=1){c.innerHTML='';return;}
+let h=`<button onclick="goPage(${state.page-1})" class="w-8 h-8 flex items-center justify-center rounded-lg text-xs ${state.page===1?'text-tx-3/30 cursor-not-allowed':'text-tx-2 hover:bg-card hover:text-tx'} transition-colors" ${state.page===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+const r=getPageRange(state.page,tp);
+r.forEach(p=>{if(p==='...')h+='<span class="w-8 h-8 flex items-center justify-center text-tx-3 text-xs">...</span>';
+else h+=`<button onclick="goPage(${p})" class="w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors" style="${p===state.page?'background:rgba(201,168,76,.15);color:#C9A84C':''}">${p}</button>`;});
+h+=`<button onclick="goPage(${state.page+1})" class="w-8 h-8 flex items-center justify-center rounded-lg text-xs ${state.page===tp?'text-tx-3/30 cursor-not-allowed':'text-tx-2 hover:bg-card hover:text-tx'} transition-colors" ${state.page===tp?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;c.innerHTML=h;}
+function getPageRange(c,t){if(t<=7)return Array.from({length:t},(_,i)=>i+1);if(c<=4)return[1,2,3,4,'...',t];if(c>=t-3)return[1,'...',t-4,t-3,t-2,t-1,t];return[1,'...',c-1,c,c+1,c+2,'...',t];}
+function goPage(p){const t=Math.max(1,Math.ceil(getFilteredHymns().length/PER_PAGE));if(p<1||p>t)return;state.page=p;renderGrid();window.scrollTo({top:0,behavior:'smooth'});}
+
+// PAINEL DE DETALHE
+function openPanel(id,skipTrans){const pc=document.getElementById('panelContent');const ps=document.getElementById('panelScroll');
+if(state.selected&&!skipTrans){pc.classList.add('fade-out');setTimeout(()=>{state.selected=id;renderPanel(id);ps.scrollTop=0;pc.classList.remove('fade-out');},200);}
+else{state.selected=id;renderPanel(id);ps.scrollTop=0;}
+document.getElementById('detailPanel').classList.add('panel-enter');document.getElementById('panelOverlay').classList.remove('hidden');}
+
+function renderPanel(id){
+const h=hymns.find(x=>x.id===id);if(!h)return;const d=state.data[id]||{};const isC=h.type==='corinho';const nS=isC?`Corinho ${h.num}`:`Hino ${h.num}`;const nD=isC?'C'+h.num:String(h.num).padStart(3,'0');
+const sL={green:'Bom — consigo tocar bem',yellow:'Praticar — preciso treinar mais',red:'Difícil — não consigo tocar'};
+const occH=h.occasions.length>0?`<div class="flex flex-wrap gap-1.5 mb-1">${h.occasions.map(o=>{const s={batismo:'bg-occ-bt/10 text-occ-bt border-occ-bt/20',santa_ceia:'bg-occ-sc/10 text-occ-sc border-occ-sc/20',funeral:'bg-occ-fu/10 text-occ-fu border-occ-fu/20',encerramento:'bg-occ-en/10 text-occ-en border-occ-en/20'};const l={batismo:'Batismo',santa_ceia:'Santa Ceia',funeral:'Funeral',encerramento:'Encerramento'};return`<span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border ${s[o]}">${l[o]}</span>`;}).join('')}')`:'';
+const bH=TIME_SIGS.map(t=>`<button onclick="metroSetTimeSig('${t.sig}')" class="beat-btn text-[10px] font-bold px-2 py-1 rounded-md text-tx-3" data-sig="${t.sig}">${t.sig}</button>`).join('');
+
+document.getElementById('panelContent').innerHTML=`<div>
+<div class="flex items-center gap-2.5 mb-1"><span class="text-3xl font-display font-bold text-acc">${nD}</span>
+ ${h.isJovem?'<span class="text-[9px] uppercase tracking-wider text-s-jovem font-bold bg-s-jovem/10 px-2 py-0.5 rounded-full">Jovem</span>':''}
+ ${isC?'<span class="text-[9px] uppercase tracking-wider text-acc/70 font-bold bg-acc/10 px-2 py-0.5 rounded-full">Corinho</span>':''}
+</div>
+<h2 class="text-lg font-bold text-tx leading-snug mt-1.5">${h.title}</h2>
+<p class="text-tx-3 text-sm mt-0.5">${nS} do Hinário CCB</p>
+ ${occH}
+ ${d.lastUpdated?`<p class="text-tx-3 text-[10px] mt-1.5"><i class="far fa-clock mr-1"></i>Atualizado: ${new Date(d.lastUpdated).toLocaleString('pt-BR')}</p>`:''}
+</div>
+<div>
+<p class="text-[10px] font-bold text-tx-3 uppercase tracking-wider mb-2.5">Status</p>
+<div class="grid grid-cols-3 gap-2">
+<button class="status-btn ${d.status==='green'?'sel-green':''}" onclick="setStatus('${id}','green')"><i class="fas fa-check-circle text-lg"></i><span>Bom</span></button>
+<button class="status-btn ${d.status==='yellow'?'sel-yellow':''}" onclick="setStatus('${id}','yellow')"><i class="fas fa-exclamation-circle text-lg"></i><span>Praticar</span></button>
+<button class="status-btn ${d.status==='red'?'sel-red':''}" onclick="setStatus('${id}','red')"><i class="fas fa-times-circle text-lg"></i><span>Difícil</span></button>
+</div>
+ ${d.status?`<p class="text-[11px] text-tx-3 mt-2 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full" style="background:${d.status==='green'?'#34D399':d.status==='yellow'?'#FBBF24':'#F87171'}"></span>${sL[d.status]}</p>`:''}
+ ${d.status?`<button onclick="setStatus('${id}',null)" class="text-[11px] text-tx-3 hover:text-tx-2 mt-1 transition-colors"><i class="fas fa-undo mr-1"></i>Remover</button>`:''}
+</div>
+<div class="bg-card border border-bdr rounded-xl p-4">
+<div class="flex items-center justify-between mb-3">
+<p class="text-[10px] font-bold text-tx-3 uppercase tracking-wider">Metrônomo</p>
+<button id="metronomeToggle" onclick="metroToggle()" class="w-9 h-9 flex items-center justify-center rounded-lg border border-bdr bg-card hover:bg-card-h text-tx-2 hover:text-tx transition-all"><i class="fas fa-play text-sm"></i></button>
+</div>
+<div class="flex items-center justify-center gap-2.5 mb-3" id="metronomeDots"></div>
+<div class="flex items-center gap-3 mb-2">
+<button onclick="metroBpmAdjust(-1)" class="w-7 h-7 flex items-center justify-center rounded-md bg-surface border border-bdr text-tx-3 hover:text-tx text-xs transition-colors"><i class="fas fa-minus"></i></button>
+<div class="flex-1 text-center"><span class="text-2xl font-bold text-acc font-mono" id="bpmValue">${metro.bpm}</span><span class="text-[10px] text-tx-3 ml-1">BPM</span></div>
+<button onclick="metroBpmAdjust(1)" class="w-7 h-7 flex items-center justify-center rounded-md bg-surface border border-bdr text-tx-3 hover:text-tx text-xs transition-colors"><i class="fas fa-plus"></i></button>
+</div>
+<input type="range" id="bpmSlider" class="bpm-slider" min="20" max="240" value="${metro.bpm}" oninput="metroSetBpm(this.value)">
+<div class="flex flex-wrap justify-center gap-1.5 mt-3">${bH}</div>
+</div>
+<div>
+<p class="text-[10px] font-bold text-tx-3 uppercase tracking-wider mb-2.5">Notas de Prática</p>
+<textarea id="noteArea" class="note-area" placeholder="Ex: Foco no contra-canto, compasso 3/4, modulação...">${d.note||''}</textarea>
+<p class="text-[10px] text-tx-3 mt-1">Salvo automaticamente</p>
+</div>
+<div class="pt-3 border-t border-bdr">
+<p class="text-[10px] font-bold text-tx-3 uppercase tracking-wider mb-2.5">Ações</p>
+<div class="grid grid-cols-2 gap-2">
+<button onclick="openPdf(${h.num})" class="py-2.5 rounded-lg bg-acc/10 border border-acc/20 text-sm text-acc font-semibold hover:bg-acc/20 transition-colors"><i class="fas fa-file-pdf mr-1.5 text-xs"></i>Abrir no PDF</button>
+<button onclick="navHymn('${id}',-1)" class="py-2.5 rounded-lg bg-card border border-bdr text-sm text-tx-2 hover:text-tx hover:border-bdr-h transition-colors"><i class="fas fa-arrow-left mr-1.5 text-xs"></i>Anterior</button>
+<button onclick="navHymn('${id}',1)" class="py-2.5 rounded-lg bg-card border border-bdr text-sm text-tx-2 hover:text-tx hover:border-bdr-h transition-colors">Próximo<i class="fas fa-arrow-right ml-1.5 text-xs"></i></button>
+</div>
+</div>`;
+metroRenderDots();metroUpdateBeatBtns();metroUpdatePlayBtn();
+const nA=document.getElementById('noteArea');let t=null;
+nA.addEventListener('input',()=>{clearTimeout(t);t=setTimeout(()=>{if(!state.data[id])state.data[id]={};state.data[id].note=nA.value;state.data[id].lastUpdated=new Date().toISOString();saveData();renderGrid();},500);});
+}
+
+function closePanel(){if(metro.playing)metroStop();document.getElementById('detailPanel').classList.remove('panel-enter');document.getElementById('panelOverlay').classList.add('hidden');state.selected=null;}
+function setStatus(id,s){if(!state.data[id])state.data[id]={};if(s){state.data[id].status=s;state.data[id].lastUpdated=new Date().toISOString();}else{delete state.data[id].status;if(!state.data[id].note)delete state.data[id];}saveData();renderGrid();renderStats();renderPanel(id);}
+function navHymn(c,d){const l=getFilteredHymns();const i=l.findIndex(h=>h.id===c);if(i===-1)return;const n=i+d;if(n<0||n>=l.length)return;openPanel(l[n].id,false);}
+
+// SIDEBAR E EXPORTAÇÃO
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('-translate-x-full');document.getElementById('sidebarOverlay').classList.toggle('hidden');}
+function renderLetterGrid(){const ls=new Set();hymns.forEach(h=>ls.add(h.title.charAt(0).toUpperCase()));document.getElementById('letterGrid').innerHTML=ALL_LETTERS.map(l=>`<button class="letter-btn ${ls.has(l)?'':'disabled'}" data-letter="${l}">${l}</button>`).join('');}
+function exportJSON(){const b=new Blob([JSON.stringify({version:3,exportDate:new Date().toISOString(),app:'hinario-ccb-estudo',data:state.data},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`hinario-ccb-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);showToast('Exportado!','fa-file-export','text-acc');}
+function importJSON(file){const r=new FileReader();r.onload=e=>{try{const p=JSON.parse(e.target.result);if(!p.data||typeof p.data!=='object'){showToast('Arquivo inválido','fa-exclamation-triangle','text-s-red');return;}let c=0;for(const[id,v]of Object.entries(p.data)){if(v.status||(v.note&&v.note.trim())){state.data[id]={status:v.status||null,note:v.note||'',lastUpdated:v.lastUpdated||new Date().toISOString()};c++;}}saveData();renderGrid();renderStats();showToast(`${c} hino(s) importado(s)!`,'fa-file-import','text-acc');}catch(err){showToast('Erro ao ler arquivo','fa-exclamation-triangle','text-s-red');}};
+r.readAsText(file);}
+
+// MODAL / TOAST
+let confirmCb=null;
+function showConfirm(t,msg,cb,bt,bc){document.getElementById('confirmTitle').textContent=t;document.getElementById('confirmMsg').textContent=msg;const b=document.getElementById('confirmBtn');b.textContent=bt||'Confirmar';b.className=`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${bc||'bg-s-red/15 text-s-red hover:bg-s-red/25'}`;confirmCb=cb;const modal=document.getElementById('confirmModal');modal.classList.remove('hidden');modal.classList.add('flex');}
+function closeConfirm(){const m=document.getElementById('confirmModal');m.classList.add('hidden');m.classList.remove('flex');confirmCb=null;}
+let toastT=null;
+function showToast(msg,icon,cls){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;document.getElementById('toastIcon').className=`fas ${icon||'fa-check-circle'} ${cls||'text-s-green'}`;t.classList.add('toast-show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('toast-show'),3000);}
+function randomHymn(){const r=hymns.filter(h=>state.data[h.id]?.status==='red'),y=hymns.filter(h=>state.data[h.id]?.status==='yellow'),n=hymns.filter(h=>!state.data[h.id]?.status);
+let p=r.length?r:y.length?y:n.length?n:hymns;const pick=p[Math.floor(Math.random()*p.length)];openPanel(pick.id,true);let sub=r.length?' (difíceis)':y.length?' (praticando)':'';showToast(`${pick.type==='corinho'?'Corinho':'Hino'} ${pick.num} selecionado${sub}`,'fa-dice','text-acc');}
+function updateNavActive(){document.querySelectorAll('#navMain .nav-btn,#navCat .nav-btn,#navRanges .nav-btn,#navStatus .nav-btn,#navOcc .nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.filter===state.filter));document.querySelectorAll('.letter-btn').forEach(b=>b.classList.toggle('active',state.filter===`letter-${b.dataset.letter}`));}
+
+// INICIALIZAÇÃO SEGURA
+document.addEventListener('DOMContentLoaded', function() {
+    loadData(); renderLetterGrid(); renderStats(); renderGrid();
+
+    ['navMain','navCat','navRanges','navStatus','navOcc'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{const b=e.target.closest('.nav-btn');if(!b)return;state.filter=b.dataset.filter;state.page=1;updateNavActive();renderGrid();if(window.innerWidth<768)toggleSidebar();});});
+    document.getElementById('letterGrid').addEventListener('click',e=>{const b=e.target.closest('.letter-btn');if(!b||b.classList.contains('disabled'))return;const l=b.dataset.letter;state.filter=state.filter===`letter-${l}`?'all':`letter-${l}`;state.page=1;updateNavActive();renderGrid();if(window.innerWidth<768)toggleSidebar();});
+
+    let searchT=null;
+    document.getElementById('searchInput').addEventListener('input',e=>{clearTimeout(searchT);searchT=setTimeout(()=>{state.search=e.target.value;state.page=1;renderGrid();},200);});
+
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey||e.metaKey) && e.key==='k') { e.preventDefault(); document.getElementById('searchInput').focus(); }
+        if (e.key==='Escape') { closePanel(); closeConfirm(); closePdfModal(); }
+        if (document.getElementById('pdfModal').style.display === 'flex') {
+            if (e.key==='ArrowRight') pdfNextPage();
+            if (e.key==='ArrowLeft') pdfPrevPage();
+        }
+    });
+
+    document.getElementById('btnExport').addEventListener('click', exportJSON);
+    document.getElementById('btnImport').addEventListener('click', ()=>document.getElementById('fileImport').click());
+    document.getElementById('fileImport').addEventListener('change', e=>{if(e.target.files.length>0){importJSON(e.target.files[0]);e.target.value='';}});
+    document.getElementById('btnClear').addEventListener('click', ()=>{showConfirm('Limpar todos os dados?','Vai apagar tudo.',()=>{state.data={};saveData();renderGrid();renderStats();closePanel();showToast('Dados removidos','fa-trash-alt','text-s-red');},'Limpar tudo','bg-s-red/15 text-s-red hover:bg-s-red/25');});
+    document.getElementById('confirmBtn').addEventListener('click', ()=>{if(confirmCb)confirmCb();closeConfirm();});
+    document.getElementById('confirmModal').addEventListener('click', e=>{if(e.target===document.getElementById('confirmModal'))closeConfirm();});
+    document.getElementById('btnRandom').addEventListener('click', randomHymn);
+});
 </script>
 </body>
 </html>
